@@ -1,8 +1,4 @@
-# Every node has the parameter use_sim_time; it’s not unique to turtlesim.
-
-# Based on their names, it looks like /turtlesim’s parameters determine the background color of the turtlesim window using RGB color values.
-
-# To determine a parameter’s type, you can use ros2 param get.Understanding parameters
+# Understanding parameters
 
 A parameter is a configuration value of a node. You can think of parameters as node settings.
 A node can store parameters as integers, floats, booleans, strings, and lists. In ROS 2, each node maintains its own parameters.
@@ -53,7 +49,6 @@ You will see the node namespaces, /teleop_turtle and /turtlesim, followed by eac
   use_sim_time
 ```
 
-
 Every node has the parameter `use_sim_time`; it’s not unique to turtlesim.
 
 Based on their names, it looks like `/turtlesim`’s parameters determine the background color of the turtlesim window using RGB color values.
@@ -64,15 +59,11 @@ To determine a parameter’s type, you can use `ros2 param get`.
 
 To display the type and current value of a parameter, use the command:
 
-
-
 ```bash
 ros2 param get 
 ```
 
 Let’s find out the current value of /turtlesim’s parameter background_g:
-
-
 
 ```
 ros2 param get /turtlesim background_g
@@ -80,15 +71,11 @@ ros2 param get /turtlesim background_g
 
 Which will return the value:
 
-
-
 ```
 Integer value is: 86
 ```
 
 Now you know background_g holds an integer value.
-
-
 
 If you run the same command on background_r and background_b, you will get the values 69 and 255, respectively.
 
@@ -96,23 +83,17 @@ If you run the same command on background_r and background_b, you will get the v
 
 To change a parameter’s value at runtime, use the command:
 
-
-
 ```
 ros2 param set 
 ```
 
 Let’s change /turtlesim’s background color:
 
-
-
 ```
 ros2 param set /turtlesim background_r 200
 ```
 
 Your terminal should return the message:
-
-
 
 ```
 Set parameter successful
