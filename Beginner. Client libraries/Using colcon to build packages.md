@@ -107,6 +107,10 @@ ros2 run examples_rclcpp_minimal_publisher publisher_member_function
 
 You should see messages from the publisher and subscriber with numbers incrementing.
 
+![001](images/001.png)
+
+![002](images/002.png)
+
 ## Setup `colcon_cd`
 
 The command `colcon_cd` allows you to quickly change the current working directory of your shell to the directory of a package. As an example `colcon_cd some_ros_package` would quickly bring you to the directory `~/ros2_ws/src/some_ros_package`.
