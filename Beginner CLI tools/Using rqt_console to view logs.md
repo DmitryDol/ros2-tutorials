@@ -2,8 +2,6 @@
 
 rqt_console is a GUI tool used to introspect log messages in ROS 2. Typically, log messages show up in your terminal. With rqt_console, you can collect those messages over time, view them closely and in a more organized manner, filter them, save them and even reload the saved files to introspect at a different time.
 
-
-
 Nodes use logs to output messages concerning events and status in a variety of ways. Their content is usually informational, for the sake of the user.
 
 #### 1. Setup
@@ -15,7 +13,6 @@ ros2 run rqt_console rqt_console
 ```
 
 ![1732439803846](image/Usingrqt_consoletoviewlogs/1732439803846.png)
-
 
 The first section of the console is where log messages from your system will display.
 
@@ -51,13 +48,11 @@ Press `Ctrl+C` in the terminal where you ran the `ros2 topic pub` command to sto
 
 ROS 2's logger levels are ordered by severity:
 
-```
 Fatal
 Error
 Warn
 Info
 Debug
-```
 
 There is no exact standard for what each level indicates, but it's safe to assume that:
 
