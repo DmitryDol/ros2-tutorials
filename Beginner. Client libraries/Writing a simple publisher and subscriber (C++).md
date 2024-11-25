@@ -1,193 +1,192 @@
-# Writing a simple publisher and subscriber (C++)
+# Написание простого издателя и подписчика (C++)
 
-## Background
+## Предыстория
 
-Nodes are executable processes that communicate over the ROS graph. In this tutorial, the nodes will pass information in the form of string messages to each other over a topic. The example used here is a simple “talker” and “listener” system; one node publishes data and the other subscribes to the topic so it can receive that data.
+Узлы - это исполняемые процессы, которые взаимодействуют в графе ROS. В этом учебнике узлы будут передавать друг другу информацию в виде строковых сообщений по теме. В данном примере используется простая система «говорящего» и «слушающего»; один узел публикует данные, а другой подписывается на тему, чтобы получать эти данные.
 
-## Tasks
+## Задачи
 
-### 1. Create a package
+### 1. Создайте пакет
 
-Open a new terminal and source your ROS 2 installation so that `ros2` commands will work.
+Откройте новый терминал и создайте исходный код вашей установки ROS 2, чтобы команды `ros2` работали.
 
-Navigate into the `ros2_ws` directory created in a previous tutorial.
+Перейдите в каталог `ros2_ws`, созданный в предыдущем уроке.
 
-Recall that packages should be created in the `src` directory, not the root of the workspace. So, navigate into `ros2_ws/src`, and run the package creation command:
+Напомним, что пакеты должны создаваться в директории `src`, а не в корне рабочей области. Поэтому перейдите в каталог `ros2_ws/src` и выполните команду создания пакета:
 
 ```bash
 ros2 pkg create --build-type ament_cmake --license Apache-2.0 cpp_pubsub
 ```
-Your terminal will return a message verifying the creation of your package `cpp_pubsub` and all its necessary files and folders.
+Ваш терминал выдаст сообщение, подтверждающее создание пакета `cpp_pubsub` и всех его необходимых файлов и папок.
 
 ![010](images/010.png)
 
-Navigate into `ros2_ws/src/cpp_pubsub/src`. Recall that this is the directory in any CMake package where the source files containing executables belong.
+Перейдите в каталог `ros2_ws/src/cpp_pubsub/src`. Напомним, что это каталог в любом пакете CMake, в котором находятся исходные файлы, содержащие исполняемые файлы.
 
-### 2. Write the publisher node
+### 2. Напишите узел издателя
 
-Download the example talker code by entering the following command:
+Загрузите пример кода talker, введя следующую команду:
 
 ```bash
 wget -O publisher_member_function.cpp https://raw.githubusercontent.com/ros2/examples/humble/rclcpp/topics/minimal_publisher/member_function.cpp
 ```
 
-Now there will be a new file named `publisher_member_function.cpp`. Open the file using your preferred text editor.
+Теперь появится новый файл с именем `publisher_member_function.cpp`. Откройте этот файл с помощью удобного для вас текстового редактора.
 
 ![011](images/011.png)
 
-### 2.1. Examine the code
+### 2.1. Изучите код
 
-The top of the code includes the standard C++ headers you will be using. After the standard C++ headers is the `rclcpp/rclcpp.hpp` include which allows you to use the most common pieces of the ROS 2 system. Last is `std_msgs/msg/string.hpp`, which includes the built-in message type you will use to publish data.
+В верхней части кода находятся стандартные заголовки C++, которые вы будете использовать. После стандартных заголовков C++ идет включение `rclcpp/rclcpp.hpp`, которое позволяет использовать наиболее распространенные части системы ROS 2. Последним идет `std_msgs/msg/string.hpp`, который включает в себя встроенный тип сообщений, который вы будете использовать для публикации данных.
 
 ![012](images/012.png)
 
-These lines represent the node’s dependencies. Recall that dependencies have to be added to `package.xml` and `CMakeLists.txt`, which you’ll do in the next section.
+Эти строки представляют собой зависимости узла. Напомним, что зависимости должны быть добавлены в `package.xml` и `CMakeLists.txt`, что вы сделаете в следующем разделе.
 
-The next line creates the node class `MinimalPublisher` by inheriting from `rclcpp::Node`. Every `this` in the code is referring to the node.
+Следующая строка создает класс узла `MinimalPublisher`, наследуя от `rclcpp::Node`. Каждый `this` в коде ссылается на узел.
 
 ![013](images/013.png)
 
-The public constructor names the node `minimal_publisher` and initializes `count_` to 0. Inside the constructor, the publisher is initialized with the `String` message type, the topic name `topic`, and the required queue size to limit messages in the event of a backup. Next, `timer_` is initialized, which causes the `timer_callback` function to be executed twice a second.
+Публичный конструктор называет узел `minimal_publisher` и инициализирует `count_` в 0. Внутри конструктора издатель инициализируется типом сообщения `String`, именем темы `topic` и необходимым размером очереди для ограничения сообщений в случае резервного копирования. Далее инициализируется `timer_`, что заставляет функцию `timer_callback` выполняться дважды в секунду.
 
 ![014](images/014.png)
 
-The `timer_callback` function is where the message data is set and the messages are actually published. The `RCLCPP_INFO` macro ensures every published message is printed to the console.
+Функция `timer_callback` - это место, где устанавливаются данные сообщений и происходит их фактическая публикация. Макрос `RCLCPP_INFO` обеспечивает вывод каждого опубликованного сообщения на консоль.
 
 ![015](images/015.png)
 
-Last is the declaration of the timer, publisher, and counter fields.
+Последними объявляются поля таймера, издателя и счетчика.
 
 ![016](images/016.png)
 
-Following the `MinimalPublisher` class is `main`, where the node actually executes. `rclcpp::init` initializes ROS 2, and `rclcpp::spin` starts processing data from the node, including callbacks from the timer.
+За классом `MinimalPublisher` следует класс `main`, в котором, собственно, и выполняется узел. `rclcpp::init` инициализирует ROS 2, а `rclcpp::spin` начинает обрабатывать данные от узла, включая обратные вызовы от таймера.
 
 ![017](images/017.png)
 
-### 2.2. Add dependencies
+### 2.2. Добавление зависимостей
 
-Navigate one level back to the `ros2_ws/src/cpp_pubsub` directory, where the `CMakeLists.txt` and `package.xml` files have been created for you.
+Перейдите на один уровень назад в директорию `ros2_ws/src/cpp_pubsub`, где для вас были созданы файлы `CMakeLists.txt` и `package.xml`.
 
-Open `package.xml` with your text editor.
+Откройте файл `package.xml` в текстовом редакторе.
 
-As mentioned in the previous tutorial, make sure to fill in the `<description>`, `<maintainer>` and `<license>` tags:
+Как уже говорилось в предыдущем уроке, не забудьте заполнить теги `<description>`, `<maintainer>` и `<license>`:
 
 ![018](images/018.png)
 
-Add a new line after the `ament_cmake` buildtool dependency and paste the following dependencies corresponding to your node’s include statements:
+Добавьте новую строку после зависимости `ament_cmake` buildtool и вставьте следующие зависимости, соответствующие заявлениям include вашего узла:
 
 ![019](images/019.png)
 
-This declares the package needs `rclcpp` and `std_msgs` when its code is built and executed.
+Это объявляет, что пакету нужны `rclcpp` и `std_msgs`, когда его код собирается и выполняется.
 
-Make sure to save the file.
+Обязательно сохраните файл.
 
 ### 2.3. CMakeLists.txt
 
-Now open the `CMakeLists.txt` file. Below the existing dependency `find_package(ament_cmake REQUIRED)`, add the lines:
+Теперь откройте файл `CMakeLists.txt`. Ниже существующей зависимости `find_package(ament_cmake REQUIRED)` добавьте строки:
 
 ![020](images/020.png)
 
-After that, add the executable and name it `talker` so you can run your node using `ros2 run`:
+После этого добавьте исполняемый файл и назовите его `talker`, чтобы вы могли запустить узел с помощью `ros2 run`:
 
 ![021](images/021.png)
 
-Finally, add the `install(TARGETS...)` section so `ros2 run` can find your executable:
+Наконец, добавьте секцию `install(TARGETS...)`, чтобы `ros2 run` мог найти ваш исполняемый файл:
 
 ![022](images/022.png)
 
-You can clean up your `CMakeLists.txt` by removing some unnecessary sections and comments, so it looks like this:
+Вы можете очистить ваш `CMakeLists.txt`, удалив некоторые ненужные секции и комментарии, чтобы он выглядел следующим образом:
 
 ![023](images/023.png)
 
-### 3. Write the subscriber node
+### 3. Напишите узел подписчика
 
-Return to `ros2_ws/src/cpp_pubsub/src` to create the next node. Enter the following code in your terminal:
+Вернитесь в `ros2_ws/src/cpp_pubsub/src` для создания следующего узла. Введите в терминал следующий код:
 
 ```bash
 wget -O subscriber_member_function.cpp https://raw.githubusercontent.com/ros2/examples/humble/rclcpp/topics/minimal_subscriber/member_function.cpp
 ```
 
-Check to ensure that these files exist:
+Убедитесь, что эти файлы существуют:
 
 ```bash
 publisher_member_function.cpp  subscriber_member_function.cpp
 ```
 
-Open the `subscriber_member_function.cpp` with your text editor.
+Откройте файл `subscriber_member_function.cpp в текстовом редакторе.
 
 ![024](images/024.png)
 
-### 3.1. Examine the code
+### 3.1. Изучите код
 
-The subscriber node’s code is nearly identical to the publisher’s. Now the node is named `minimal_subscriber`, and the constructor uses the node’s `create_subscription` class to execute the callback.
+Код узла подписчика практически идентичен коду издателя. Теперь узел называется `minimal_subscriber`, а конструктор использует класс `create_subscription` узла для выполнения обратного вызова.
 
-There is no timer because the subscriber simply responds whenever data is published to the `topic` topic.
+Таймера нет, потому что подписчик просто отвечает всякий раз, когда данные публикуются в теме `topic`.
 
 ![025](images/025.png)
 
-The `topic_callback` function receives the string message data published over the topic, and simply writes it to the console using the `RCLCPP_INFO` macro.
+Функция `topic_callback` получает данные строкового сообщения, опубликованного в теме, и просто записывает их в консоль с помощью макроса `RCLCPP_INFO`.
 
-The only field declaration in this class is the subscription.
+Единственным объявлением поля в этом классе является подписка.
 
 ![026](images/026.png)
 
-The `main` function is exactly the same, except now it spins the `MinimalSubscriber` node. For the publisher node, spinning meant starting the timer, but for the subscriber it simply means preparing to receive messages whenever they come.
+Функция `main` точно такая же, только теперь она раскручивает узел `MinimalSubscriber`. Для узла-издателя раскрутка означает запуск таймера, а для подписчика - просто подготовку к приему сообщений, когда бы они ни пришли.
 
-Since this node has the same dependencies as the publisher node, there’s nothing new to add to `package.xml`.
+Поскольку этот узел имеет те же зависимости, что и узел издателя, ничего нового в `package.xml` добавлять не нужно.
 
 ### 3.2. CMakeLists.txt
 
-Reopen `CMakeLists.txt` and add the executable and target for the subscriber node below the publisher’s entries.
+Откройте заново `CMakeLists.txt` и добавьте исполняемый файл и цель для узла subscriber ниже записей узла publisher.
 
 ![027](images/027.png)
 
-Make sure to save the file, and then your pub/sub system should be ready.
+Не забудьте сохранить файл, и ваша система pub/sub будет готова.
 
-### 4. Build and run
+### 4. Сборка и запуск
 
-You likely already have the `rclcpp` and `std_msgs` packages installed as part of your ROS 2 system. It’s good practice to run `rosdep` in the root of your workspace (`ros2_ws`) to check for missing dependencies before building:
+Скорее всего, у вас уже установлены пакеты `rclcpp` и `std_msgs` как часть вашей системы ROS 2. Хорошей практикой является запуск `rosdep` в корне вашего рабочего пространства (`ros2_ws`), чтобы проверить наличие отсутствующих зависимостей перед сборкой:
 
 ```bash
 rosdep install -i --from-path src --rosdistro humble -y
 ```
 
-Still in the root of your workspace, `ros2_ws`, build your new package:
+Все еще находясь в корне рабочей области, `ros2_ws`, соберите новый пакет:
 
 ```bash
 colcon build --packages-select cpp_pubsub
 ```
 
-Open a new terminal, navigate to `ros2_ws`, and source the setup files:
+Откройте новый терминал, перейдите в раздел `ros2_ws` и найдите установочные файлы:
 
 ```bash
 . install/setup.bash
 ```
 
-Now run the talker node:
+Теперь запустите узел talker:
 
 ```bash
 ros2 run cpp_pubsub talker
 ```
 
-The terminal should start publishing info messages every 0.5 seconds, like so:
+Терминал должен начать публиковать информационные сообщения каждые 0,5 секунды, как показано ниже:
 
 ![028](images/028.png)
 
-Open another terminal, source the setup files from inside `ros2_ws` again, and then start the listener node:
+Откройте другой терминал, снова создайте файлы настроек внутри `ros2_ws`, а затем запустите узел прослушивателя:
 
 ```bash
 ros2 run cpp_pubsub listener
 ```
 
-The listener will start printing messages to the console, starting at whatever message count the publisher is on at that time, like so:
+Слушатель начнет печатать сообщения в консоль, начиная с того количества сообщений, на котором в данный момент находится издатель, как показано ниже:
 
 ![029](images/029.png)
 
-Enter `Ctrl+C` in each terminal to stop the nodes from spinning.
+Введите `Ctrl+C` в каждом терминале, чтобы остановить вращение узлов.
 
-## Summary
+## Резюме
 
-You created two nodes to publish and subscribe to data over a topic. Before compiling and running them, you added their dependencies and executables to the package configuration files.You created two nodes to publish and subscribe to data over a topic. Before compiling and running them, you added their dependencies and executables to the package configuration files.
+Вы создали два узла для публикации и подписки на данные по теме. Перед их компиляцией и запуском вы добавили их зависимости и исполняемые файлы в файлы конфигурации пакета.Вы создали два узла для публикации и подписки на данные по теме. Перед их компиляцией и запуском вы добавили их зависимости и исполняемые файлы в файлы конфигурации пакета.
 
-You created two nodes to publish and subscribe to data over a topic. Before compiling and running them, you added their dependencies and executables to the package configuration files.
-
+Вы создали два узла для публикации и подписки на данные по теме. Перед их компиляцией и запуском вы добавили их зависимости и исполняемые файлы в файлы конфигурации пакета.
