@@ -1,70 +1,70 @@
-# Writing a simple publisher and subscriber (Python)
+# Написание простого издателя и подписчика (Python)
 
-## Background
+## Предыстория
 
-In this tutorial, you will create nodes that pass information in the form of string messages to each other over a topic. The example used here is a simple “talker” and “listener” system; one node publishes data and the other subscribes to the topic so it can receive that data.
+В этом уроке вы создадите узлы, которые будут передавать друг другу информацию в виде строковых сообщений через тему. В данном примере используется простая система «говорящего» и «слушающего»; один узел публикует данные, а другой подписывается на тему, чтобы получать эти данные.
 
-## Tasks
+## Задачи
 
-### 1. Create a package
+### 1. Создайте пакет
 
-Open a new terminal and source your ROS 2 installation so that `ros2` commands will work.
+Откройте новый терминал и создайте исходный код вашей установки ROS 2, чтобы команды `ros2` работали.
 
-Navigate into the `ros2_ws` directory created in a previous tutorial.
+Перейдите в каталог `ros2_ws`, созданный в предыдущем уроке.
 
-Recall that packages should be created in the src directory, not the root of the workspace. So, navigate into `ros2_ws/src`, and run the package creation command:
+Напомним, что пакеты должны создаваться в каталоге src, а не в корне рабочей области. Поэтому перейдите в каталог `ros2_ws/src` и выполните команду создания пакета:
 
 ```bash
 ros2 pkg create --build-type ament_python --license Apache-2.0 py_pubsub
 ```
-Your terminal will return a message verifying the creation of your package `py_pubsub` and all its necessary files and folders.
+Ваш терминал выдаст сообщение, подтверждающее создание вашего пакета `py_pubsub` и всех необходимых файлов и папок.
 
 ![030](images/030.png)
 
-### 2. Write the publisher node
+### 2. Напишите узел издателя
 
-Navigate into `ros2_ws/src/py_pubsub/py_pubsub`. Recall that this directory is a Python package with the same name as the ROS 2 package it’s nested in.
+Перейдите в директорию `ros2_ws/src/py_pubsub/py_pubsub`. Напомним, что эта директория представляет собой пакет Python с тем же именем, что и пакет ROS 2, в который он вложен.
 
-Download the example talker code by entering the following command:
+Загрузите пример кода talker, введя следующую команду:
 
 ```bash
 wget https://raw.githubusercontent.com/ros2/examples/humble/rclpy/topics/minimal_publisher/examples_rclpy_minimal_publisher/publisher_member_function.py
 ```
 
-Now there will be a new file named `publisher_member_function.py` adjacent to `__init__.py`.
+Теперь рядом с файлом `__init__.py` будет находиться новый файл с именем `publisher_member_function.py`.
 
-Open the file using your preferred text editor.
+Откройте этот файл с помощью удобного для вас текстового редактора.
 
 ![031](images/031.png)
 
-### 2.1 Examine the code
+### 2.1 Изучите код
 
-The first lines of code after the comments import `rclpy` so its `Node` class can be used.
+Первые строки кода после комментариев импортируют `rclpy`, чтобы можно было использовать его класс `Node`.
 
 ```bash
 import rclpy
 from rclpy.node import Node
 ```
 
-The next statement imports the built-in string message type that the node uses to structure the data that it passes on the topic.
+Следующий оператор импортирует встроенный тип сообщения string, который узел использует для структурирования данных, передаваемых в тему.
 
 ```bash
 from std_msgs.msg import String
 ```
 
-These lines represent the node’s dependencies. Recall that dependencies have to be added to `package.xml`, which you’ll do in the next section.
+Эти строки представляют собой зависимости узла. Напомним, что зависимости должны быть добавлены в `package.xml`, что вы и сделаете в следующем разделе.
 
-Next, the `MinimalPublisher` class is created, which inherits from (or is a subclass of) `Node`.
+Далее создается класс `MinimalPublisher`, который наследует от (или является подклассом) `Node`.
 
 ```bash
 class MinimalPublisher(Node):
 ```
 
-Following is the definition of the class’s constructor. `super().__init__` calls the `Node` class’s constructor and gives it your node name, in this case `minimal_publisher`.
+Ниже приведено определение конструктора класса. `super().__init__` вызывает конструктор класса `Node` и дает ему имя вашего узла, в данном случае `minimal_publisher`.
 
-`create_publisher` declares that the node publishes messages of type `String` (imported from the `std_msgs.msg` module), over a topic named `topic`, and that the “queue size” is 10. Queue size is a required QoS (quality of service) setting that limits the amount of queued messages if a subscriber is not receiving them fast enough.
+`create_publisher` объявляет, что узел публикует сообщения типа `String` (импортированные из модуля `std_msgs.msg`), по теме с именем `topic`, и что «размер очереди» равен 10. Размер очереди - это необходимый параметр QoS (качество обслуживания), который ограничивает количество сообщений в очереди, если абонент не получает их достаточно быстро.
 
-Next, a timer is created with a callback to execute every 0.5 seconds. `self.i` is a counter used in the callback.
+Далее создается таймер с обратным вызовом, который должен выполняться каждые 0,5 секунды. `self.i` - это счетчик, используемый в обратном вызове.
 
 ```bash
 def __init__(self):
@@ -75,7 +75,7 @@ def __init__(self):
     self.i = 0
 ```
 
-`timer_callback` creates a message with the counter value appended, and publishes it to the console with `get_logger().info`.
+`timer_callback` создает сообщение с добавлением значения счетчика и публикует его в консоли с помощью `get_logger().info`.
 
 ```bash
 def timer_callback(self):
@@ -86,7 +86,7 @@ def timer_callback(self):
     self.i += 1
 ```
 
-Lastly, the main function is defined.
+Наконец, определена главная функция.
 
 ```bash
 def main(args=None):
@@ -103,15 +103,15 @@ def main(args=None):
     rclpy.shutdown()
 ```
 
-First the `rclpy` library is initialized, then the node is created, and then it “spins” the node so its callbacks are called.
+Сначала инициализируется библиотека `rclpy`, затем создается узел, а потом он «вращает» узел, чтобы вызывались его обратные вызовы.
 
-### 2.2. Add dependencies
+### 2.2. Добавление зависимостей
 
-Navigate one level back to the `ros2_ws/src/py_pubsub` directory, where the `setup.py`, `setup.cfg`, and `package.xml` files have been created for you.
+Перейдите на один уровень назад в каталог `ros2_ws/src/py_pubsub`, где для вас были созданы файлы `setup.py`, `setup.cfg` и `package.xml`.
 
-Open `package.xml` with your text editor.
+Откройте файл `package.xml` в текстовом редакторе.
 
-As mentioned in the previous tutorial, make sure to fill in the `<description>`, `<maintainer>` and `<license>` tags:
+Как уже говорилось в предыдущем уроке, не забудьте заполнить теги `<description>`, `<maintainer>` и `<license>`:
 
 ```bash
 <description>Examples of minimal publisher/subscriber using rclpy</description>
@@ -119,22 +119,22 @@ As mentioned in the previous tutorial, make sure to fill in the `<description>`,
 <license>Apache License 2.0</license>
 ```
 
-After the lines above, add the following dependencies corresponding to your node’s import statements:
+После строк, указанных выше, добавьте следующие зависимости, соответствующие заявлениям об импорте вашего узла:
 
 ```bash
 <exec_depend>rclpy</exec_depend>
 <exec_depend>std_msgs</exec_depend>
 ```
 
-This declares the package needs `rclpy` and `std_msgs` when its code is executed.
+Это объявляет, что пакету нужны `rclpy` и `std_msgs` при выполнении его кода.
 
-Make sure to save the file.
+Не забудьте сохранить файл.
 
 ![032](images/032.png)
 
-### 2.3. Add an entry point
+### 2.3. Добавление точки входа
 
-Open the `setup.py` file. Again, match the `maintainer`, `maintainer_email`, `description` and `license` fields to your `package.xml`:
+Откройте файл `setup.py`. Снова сопоставьте поля `maintainer`, `maintainer_email`, `description` и `license` с вашим `package.xml`:
 
 ```bash
 maintainer='YourName',
@@ -143,7 +143,7 @@ description='Examples of minimal publisher/subscriber using rclpy',
 license='Apache License 2.0',
 ```
 
-Add the following line within the `console_scripts` brackets of the `entry_points` field:
+Добавьте следующую строку в скобках `console_scripts` в поле `entry_points`:
 
 ```bash
 entry_points={
@@ -153,13 +153,13 @@ entry_points={
 },
 ```
 
-Don’t forget to save.
+Не забудьте сохранить файл.
 
 ![033](images/033.png)
 
-### 2.4. Check setup.cfg
+### 2.4. Проверка файла setup.cfg
 
-The contents of the `setup.cfg` file should be correctly populated automatically, like so:
+Содержимое файла `setup.cfg` должно быть корректно заполнено автоматически, как показано ниже:
 
 ```bash
 [develop]
@@ -168,29 +168,29 @@ script_dir=$base/lib/py_pubsub
 install_scripts=$base/lib/py_pubsub
 ```
 
-This is simply telling setuptools to put your executables in lib, because ros2 run will look for them there.
+Это просто указывает setuptools поместить ваши исполняемые файлы в lib, потому что ros2 run будет искать их там.
 
-### 3. Write the subscriber node
+### 3. Напишите узел подписчика
 
-Return to `ros2_ws/src/py_pubsub/py_pubsub` to create the next node. Enter the following code in your terminal:
+Вернитесь в `ros2_ws/src/py_pubsub/py_pubsub` для создания следующего узла. Введите в терминал следующий код:
 
 ```bash
 wget https://raw.githubusercontent.com/ros2/examples/humble/rclpy/topics/minimal_subscriber/examples_rclpy_minimal_subscriber/subscriber_member_function.py
 ```
 
-Now the directory should have these files:
+Теперь в каталоге должны быть эти файлы:
 
 ```bash
 __init__.py  publisher_member_function.py  subscriber_member_function.py
 ```
 
-### 3.1. Examine the code
+### 3.1. Изучите код
 
-Open the `subscriber_member_function.py` with your text editor.
+Откройте файл `subscriber_member_function.py в текстовом редакторе.
 
 ![034](images/034.png)
 
-The subscriber node’s code is nearly identical to the publisher’s. The constructor creates a subscriber with the same arguments as the publisher. Recall from the topics tutorial that the topic name and message type used by the publisher and subscriber must match to allow them to communicate.
+Код узла подписчика практически идентичен коду издателя. Конструктор создает подписчика с теми же аргументами, что и издателя. Вспомните из учебника по темам, что имя темы и тип сообщения, используемые издателем и подписчиком, должны совпадать, чтобы они могли взаимодействовать.
 
 ```bash
 self.subscription = self.create_subscription(
@@ -200,16 +200,16 @@ self.subscription = self.create_subscription(
     10)
 ```
 
-The subscriber’s constructor and callback don’t include any timer definition, because it doesn’t need one. Its callback gets called as soon as it receives a message.
+Конструктор и обратный вызов подписчика не содержат определения таймера, потому что он ему не нужен. Его обратный вызов вызывается, как только он получает сообщение.
 
-The callback definition simply prints an info message to the console, along with the data it received. Recall that the publisher defines `msg.data = 'Hello World: %d' % self.i`
+Определение обратного вызова просто печатает информационное сообщение в консоль вместе с полученными данными. Вспомните, что издатель определяет `msg.data = 'Hello World: %d' % self.i`.
 
 ```bash
 def listener_callback(self, msg):
     self.get_logger().info('I heard: "%s"' % msg.data)
 ```
 
-The `main` definition is almost exactly the same, replacing the creation and spinning of the publisher with the subscriber.
+Определение `main` почти полностью аналогично, заменяя создание и вращение издателя на подписчика.
 
 ```bash
 minimal_subscriber = MinimalSubscriber()
@@ -217,11 +217,11 @@ minimal_subscriber = MinimalSubscriber()
 rclpy.spin(minimal_subscriber)
 ```
 
-Since this node has the same dependencies as the publisher, there’s nothing new to add to `package.xml`. The `setup.cfg` file can also remain untouched.
+Поскольку этот узел имеет те же зависимости, что и издатель, в `package.xml` ничего нового добавлять не нужно. Файл `setup.cfg` также может оставаться нетронутым.
 
-### 3.3. Add an entry point
+### 3.3. Добавить точку входа
 
-Reopen `setup.py` and add the entry point for the subscriber node below the publisher’s entry point. The `entry_points` field should now look like this:
+Откройте заново файл `setup.py` и добавьте точку входа для узла подписчика ниже точки входа издателя. Поле `entry_points` теперь должно выглядеть следующим образом:
 
 ```bash
 entry_points={
@@ -232,50 +232,50 @@ entry_points={
 },
 ```
 
-Make sure to save the file, and then your pub/sub system should be ready.
+Не забудьте сохранить файл, и ваша система pub/sub будет готова.
 
-### 4. Build and run
+### 4. Сборка и запуск
 
-You likely already have the `rclpy` and `std_msgs` packages installed as part of your ROS 2 system. It’s good practice to run `rosdep` in the root of your workspace (`ros2_ws`) to check for missing dependencies before building:
+Скорее всего, у вас уже установлены пакеты `rclpy` и `std_msgs` как часть вашей системы ROS 2. Хорошей практикой является запуск `rosdep` в корне вашего рабочего пространства (`ros2_ws`), чтобы проверить наличие отсутствующих зависимостей перед сборкой:
 
 ```bash
 rosdep install -i --from-path src --rosdistro humble -y
 ```
 
-Still in the root of your workspace, `ros2_ws`, build your new package:
+Все еще находясь в корне рабочей области, `ros2_ws`, соберите новый пакет:
 
 ```bash
 colcon build --packages-select py_pubsub
 ```
 
-Open a new terminal, navigate to `ros2_ws`, and source the setup files:
+Откройте новый терминал, перейдите в раздел `ros2_ws` и найдите установочные файлы:
 
 ```bash
 source install/setup.bash
 ```
 
-Now run the talker node:
+Теперь запустите узел talker:
 
 ```bash
 ros2 run py_pubsub talker
 ```
 
-The terminal should start publishing info messages every 0.5 seconds, like so:
+Терминал должен начать публиковать информационные сообщения каждые 0,5 секунды, как показано ниже:
 
 ![035](images/035.png)
 
-Open another terminal, source the setup files from inside `ros2_ws` again, and then start the listener node:
+Откройте другой терминал, снова создайте файлы настроек внутри `ros2_ws`, а затем запустите узел прослушивателя:
 
 ```bash
 ros2 run py_pubsub listener
 ```
 
-The listener will start printing messages to the console, starting at whatever message count the publisher is on at that time, like so:
+Слушатель начнет печатать сообщения в консоль, начиная с того количества сообщений, на котором в данный момент находится издатель, как показано ниже:
 
 ![036](images/036.png)
 
-Enter `Ctrl+C` in each terminal to stop the nodes from spinning.
+Введите `Ctrl+C` в каждом терминале, чтобы остановить вращение узлов.
 
-## Summary
+## Резюме
 
-You created two nodes to publish and subscribe to data over a topic. Before running them, you added their dependencies and entry points to the package configuration files.
+Вы создали два узла для публикации и подписки на данные по теме. Перед их запуском вы добавили их зависимости и точки входа в файлы конфигурации пакетов.
