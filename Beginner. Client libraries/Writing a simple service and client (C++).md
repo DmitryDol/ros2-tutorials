@@ -1,20 +1,20 @@
-# Writing a simple service and client (C++)
+# Написание простого сервиса и клиента (C++)
 
-## Background
+## Предыстория
 
-When nodes communicate using services, the node that sends a request for data is called the client node, and the one that responds to the request is the service node. The structure of the request and response is determined by a .srv file.
+Когда узлы общаются с помощью сервисов, узел, посылающий запрос на получение данных, называется клиентским узлом, а узел, отвечающий на запрос, - сервисным узлом. Структура запроса и ответа определяется файлом .srv.
 
-The example used here is a simple integer addition system; one node requests the sum of two integers, and the other responds with the result.
+В качестве примера здесь используется простая система сложения целых чисел; один узел запрашивает сумму двух целых чисел, а другой отвечает результатом.
 
-## Tasks
+## Задачи
 
-### 1. Create a package
+### 1. Создайте пакет
 
-Open a new terminal and source your ROS 2 installation so that `ros2` commands will work.
+Откройте новый терминал и создайте исходный код вашей установки ROS 2, чтобы команды `ros2` работали.
 
-Navigate into the `ros2_ws` directory created in a previous tutorial.
+Перейдите в каталог `ros2_ws`, созданный в предыдущем уроке.
 
-Recall that packages should be created in the `src` directory, not the root of the workspace. Navigate into `ros2_ws/src` and create a new package:
+Напомним, что пакеты должны создаваться в директории `src`, а не в корне рабочей области. Перейдите в каталог `ros2_ws/src` и создайте новый пакет:
 
 ```bash
 ros2 pkg create --build-type ament_cmake --license Apache-2.0 cpp_srvcli --dependencies rclcpp example_interfaces
@@ -22,9 +22,9 @@ ros2 pkg create --build-type ament_cmake --license Apache-2.0 cpp_srvcli --depen
 
 ![037](images/037.png)
 
-Your terminal will return a message verifying the creation of your package `cpp_srvcli` and all its necessary files and folders.
+Ваш терминал выдаст сообщение, подтверждающее создание вашего пакета `cpp_srvcli` и всех необходимых файлов и папок.
 
-The `--dependencies` argument will automatically add the necessary dependency lines to `package.xml` and `CMakeLists.txt`. `example_interfaces` is the package that includes the .srv file you will need to structure your requests and responses:
+Аргумент `--dependencies` автоматически добавит необходимые строки зависимостей в `package.xml` и `CMakeLists.txt`. `example_interfaces` - это пакет, включающий .srv-файл, необходимый для структурирования запросов и ответов:
 
 ```bash
 int64 a
@@ -33,13 +33,13 @@ int64 b
 int64 sum
 ```
 
-The first two lines are the parameters of the request, and below the dashes is the response.
+Первые две строки - это параметры запроса, а ниже через тире - ответ.
 
-### 1.1. Update `package.xml`
+### 1.1. Обновление `package.xml`
 
-Because you used the `--dependencies` option during package creation, you don’t have to manually add dependencies to `package.xml` or `CMakeLists.txt`.
+Поскольку при создании пакета вы использовали опцию `--dependencies`, вам не нужно вручную добавлять зависимости в `package.xml` или `CMakeLists.txt`.
 
-As always, though, make sure to add the description, maintainer email and name, and license information to `package.xml`.
+Однако, как всегда, не забудьте добавить в `package.xml` описание, email и имя сопровождающего, а также информацию о лицензии.
 
 ```bash
 <description>C++ client server tutorial</description>
@@ -47,9 +47,9 @@ As always, though, make sure to add the description, maintainer email and name, 
 <license>Apache License 2.0</license>
 ```
 
-### 2. Write the service node
+### 2. Напишите узел службы
 
-Inside the `ros2_ws/src/cpp_srvcli/src` directory, create a new file called `add_two_ints_server.cpp` and paste the following code within:
+Внутри директории `ros2_ws/src/cpp_srvcli/src` создайте новый файл `add_two_ints_server.cpp` и вставьте в него следующий код:
 
 ```bash
 #include "rclcpp/rclcpp.hpp"
@@ -82,11 +82,11 @@ int main(int argc, char **argv)
 }
 ```
 
-### 2.1. Examine the code
+### 2.1. Изучите код
 
-The first two `#include` statements are your package dependencies.
+Первые два утверждения `#include` - это зависимости вашего пакета.
 
-The `add` function adds two integers from the request and gives the sum to the response, while notifying the console of its status using logs.
+Функция `add` складывает два целых числа из запроса и отдает сумму в ответ, одновременно уведомляя консоль о своем статусе с помощью логов.
 
 ```bash
 void add(const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> request,
@@ -99,49 +99,49 @@ void add(const std::shared_ptr<example_interfaces::srv::AddTwoInts::Request> req
 }
 ```
 
-The `main` function accomplishes the following, line by line:
+Функция `main` построчно выполняет следующие действия:
 
-- Initializes ROS 2 C++ client library:
+- Инициализирует клиентскую библиотеку ROS 2 C++:
 
 ```bash
 rclcpp::init(argc, argv);
 ```
 
-- Creates a node named `add_two_ints_server`:
+- Создает узел с именем `add_two_ints_server`:
 
 ```bash
 std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("add_two_ints_server");
 ```
 
-- Creates a service named `add_two_ints` for that node and automatically advertises it over the networks with the `&add` method:
+- Создает сервис с именем `add_two_ints` для этого узла и автоматически рекламирует его в сетях с помощью метода `&add`:
 
 ```bash
 rclcpp::Service<example_interfaces::srv::AddTwoInts>::SharedPtr service =
 node->create_service<example_interfaces::srv::AddTwoInts>("add_two_ints", &add);
 ```
 
-- Prints a log message when it’s ready:
+- Печатает сообщение в журнале, когда все готово:
 
 ```bash
 RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "Ready to add two ints.");
 ```
 
-- Spins the node, making the service available.
+- Раскручивает узел, делая службу доступной.
 
 ```bash
 rclcpp::spin(node);
 ```
 
-### 2.2. Add executable
+### 2.2. Добавление исполняемого файла
 
-The `add_executable` macro generates an executable you can run using `ros2 run`. Add the following code block to `CMakeLists.txt` to create an executable named `server`:
+Макрос `add_executable` генерирует исполняемый файл, который можно запустить с помощью `ros2 run`. Добавьте следующий блок кода в `CMakeLists.txt` для создания исполняемого файла с именем `server`:
 
 ```bash
 add_executable(server src/add_two_ints_server.cpp)
 ament_target_dependencies(server rclcpp example_interfaces)
 ```
 
-So `ros2 run` can find the executable, add the following lines to the end of the file, right before `ament_package()`:
+Чтобы `ros2 run` мог найти исполняемый файл, добавьте следующие строки в конец файла, прямо перед `ament_package()`:
 
 ```bash
 install(TARGETS
@@ -149,9 +149,9 @@ install(TARGETS
   DESTINATION lib/${PROJECT_NAME})
 ```
 
-### 3. Write the client node
+### 3. Напишите клиентский узел
 
-Inside the `ros2_ws/src/cpp_srvcli/src directory`, create a new file called `add_two_ints_client.cpp` and paste the following code within:
+Внутри директории `ros2_ws/src/cpp_srvcli/src` создайте новый файл `add_two_ints_client.cpp` и вставьте в него следующий код:
 
 ```bash
 #include "rclcpp/rclcpp.hpp"
@@ -203,9 +203,9 @@ int main(int argc, char **argv)
 }
 ```
 
-### 3.1. Examine the code
+### 3.1. Изучите код
 
-Similar to the service node, the following lines of code create the node and then create the client for that node:
+Как и в случае с узлом службы, следующие строки кода создают узел, а затем создают клиента для этого узла:
 
 ```bash
 std::shared_ptr<rclcpp::Node> node = rclcpp::Node::make_shared("add_two_ints_client");
@@ -213,7 +213,7 @@ rclcpp::Client<example_interfaces::srv::AddTwoInts>::SharedPtr client =
   node->create_client<example_interfaces::srv::AddTwoInts>("add_two_ints");
 ```
 
-Next, the request is created. Its structure is defined by the .srv file mentioned earlier.
+Далее создается запрос. Его структура определяется файлом .srv, о котором говорилось ранее.
 
 ```bash
 auto request = std::make_shared<example_interfaces::srv::AddTwoInts::Request>();
@@ -221,23 +221,23 @@ request->a = atoll(argv[1]);
 request->b = atoll(argv[2]);
 ```
 
-The `while` loop gives the client 1 second to search for service nodes in the network. If it can’t find any, it will continue waiting.
+Цикл `while` дает клиенту 1 секунду на поиск сервисных узлов в сети. Если он не найдет ни одного, то продолжит ожидание.
 
 ```bash
 RCLCPP_INFO(rclcpp::get_logger("rclcpp"), "service not available, waiting again...");
 ```
 
-If the client is canceled (e.g. by you entering `Ctrl+C` into the terminal), it will return an error log message stating it was interrupted.
+Если клиент будет прерван (например, вы введете `Ctrl+C` в терминале), он вернет сообщение об ошибке, в котором будет указано, что он был прерван.
 
 ```bash
 RCLCPP_ERROR(rclcpp::get_logger("rclcpp"), "Interrupted while waiting for the service. Exiting.");
 ```
 
-Then the client sends its request, and the node spins until it receives its response, or fails.
+Затем клиент отправляет свой запрос, и узел вращается до тех пор, пока не получит ответ или не выйдет из строя.
 
-### 3.2. Add executable
+### 3.2. Добавление исполняемого файла
 
-Return to `CMakeLists.txt` to add the executable and target for the new node. After removing some unnecessary boilerplate from the automatically generated file, your `CMakeLists.txt` should look like this:
+Вернитесь в `CMakeLists.txt`, чтобы добавить исполняемый файл и цель для нового узла. После удаления ненужных шаблонов из автоматически сгенерированного файла, ваш `CMakeLists.txt` должен выглядеть следующим образом:
 
 ```bash
 cmake_minimum_required(VERSION 3.5)
@@ -261,55 +261,55 @@ install(TARGETS
 ament_package()
 ```
 
-### 4. Build and run
+### 4. Сборка и запуск
 
-It’s good practice to run `rosdep` in the root of your workspace (`ros2_ws`) to check for missing dependencies before building:
+Хорошей практикой является запуск `rosdep` в корне вашего рабочего пространства (`ros2_ws`), чтобы проверить наличие отсутствующих зависимостей перед сборкой:
 
 ```bash
 rosdep install -i --from-path src --rosdistro humble -y
 ```
 
-Navigate back to the root of your workspace, ros2_ws, and build your new package:
+Перейдите в корень рабочей области, ros2_ws, и соберите новый пакет:
 
 ```bash
 colcon build --packages-select cpp_srvcli
 ```
 
-Open a new terminal, navigate to `ros2_ws`, and source the setup files:
+Откройте новый терминал, перейдите в раздел `ros2_ws` и найдите установочные файлы:
 
 ```bash
 source install/setup.bash
 ```
 
-Now run the service node:
+Теперь запустите узел службы:
 
 ```bash
 ros2 run cpp_srvcli server
 ```
 
-The terminal should return the following message, and then wait:
+Терминал должен выдать следующее сообщение, а затем подождать:
 
 ![038](images/038.png)
 
-Open another terminal, source the setup files from inside `ros2_ws` again. Start the client node, followed by any two integers separated by a space:
+Откройте другой терминал, снова создайте файлы настроек внутри `ros2_ws`. Запустите клиентскую ноду, а затем любые два целых числа, разделенные пробелом:
 
 ```bash
 ros2 run cpp_srvcli client 2 3
 ```
 
-If you chose `2` and `3`, for example, the client would receive a response like this:
+Если вы выбрали, например, `2` и `3`, клиент получит такой ответ:
 
 ![039](images/039.png)
 
-Return to the terminal where your service node is running. You will see that it published log messages when it received the request and the data it received, and the response it sent back:
+Вернитесь в терминал, где запущен ваш узел службы. Вы увидите, что он опубликовал сообщения журнала о получении запроса, полученных данных и ответа, который он отправил обратно:
 
 ![040](images/040.png)
 
-Enter `Ctrl+C` in the server terminal to stop the node from spinning.
+Введите `Ctrl+C` в терминале сервера, чтобы остановить вращение узла.
 
-## Summary
+## Резюме
 
-You created two nodes to request and respond to data over a service. You added their dependencies and executables to the package configuration files so that you could build and run them, and see a service/client system at work.
+Вы создали два узла для запроса и ответа на данные через сервис. Вы добавили их зависимости и исполняемые файлы в файлы конфигурации пакетов, чтобы можно было собрать и запустить их и увидеть работу системы сервис/клиент.
 
-You created two nodes to request and respond to data over a service. You added their dependencies and executables to the package configuration files so that you could build and run them, and see a service/client system at work.
+Вы создали два узла для запроса и ответа на данные через сервис. Вы добавили их зависимости и исполняемые файлы в файлы конфигурации пакетов, чтобы можно было собрать и запустить их, а также увидеть систему сервиса/клиента в работе.
 
