@@ -1,51 +1,51 @@
-# Creating a workspace
+# Создание рабочего пространства
 
-## Background
+## Предыстория
 
-A workspace is a directory containing ROS 2 packages. Before using ROS 2, it’s necessary to source your ROS 2 installation workspace in the terminal you plan to work in. This makes ROS 2’s packages available for you to use in that terminal.
+Рабочее пространство - это каталог, содержащий пакеты ROS 2. Перед использованием ROS 2 необходимо создать рабочее пространство установки ROS 2 в терминале, в котором вы планируете работать. Это сделает пакеты ROS 2 доступными для использования в этом терминале.
 
-## Tasks
+## Задачи
 
-### 1. Source ROS 2 environment
+### 1. Исходное окружение ROS 2
 
-Depending on how you installed ROS 2 (from source or binaries), and which platform you’re on, your exact source command will vary:
+В зависимости от того, как вы установили ROS 2 (из исходников или двоичных файлов) и на какой платформе вы работаете, ваша точная команда исходников будет отличаться:
 
 ```bash
 source /opt/ros/humble/setup.bash
 ```
 
-### 2. Create a new directory
+### 2. Создайте новый каталог
 
-Best practice is to create a new directory for every new workspace. The name doesn’t matter, but it is helpful to have it indicate the purpose of the workspace. Let’s choose the directory name `ros2_ws`, for “development workspace”:
+Лучше всего создавать новую директорию для каждого нового рабочего пространства. Название не имеет значения, но полезно, чтобы оно указывало на назначение рабочей области. Давайте выберем имя директории `ros2_ws`, для «рабочей области разработки»:
 
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
 ```
 
-Another best practice is to put any packages in your workspace into the src directory. The above code creates a `src` directory inside `ros2_ws` and then navigates into it.
+Еще одна лучшая практика - помещать все пакеты в рабочую область в каталог src. Приведенный выше код создает каталог `src` внутри `ros2_ws`, а затем переходит в него.
 
-### 3. Clone a sample repo
+### 3. Клонирование примера репо
 
-Ensure you’re still in the `ros2_ws/src` directory before you clone.
+Перед клонированием убедитесь, что вы все еще находитесь в директории `ros2_ws/src`.
 
-A repo can have multiple branches. You need to check out the one that targets your installed ROS 2 distro. When you clone this repo, add the `-b` argument followed by that branch.
+У репо может быть несколько веток. Вам нужно проверить ту, которая нацелена на ваш установленный дистрибутив ROS 2. Когда вы будете клонировать это репо, добавьте аргумент `-b`, за которым следует эта ветка.
 
-In the `ros2_ws/src` directory, run the following command:
+В каталоге `ros2_ws/src` выполните следующую команду:
 
 ```bash
 git clone https://github.com/ros/ros_tutorials.git -b humble
 ```
 
-Now `ros_tutorials` is cloned in your workspace. The `ros_tutorials` repository contains the `turtlesim` package, which we’ll use in the rest of this tutorial. The other packages in this repository are not built because they contain a `COLCON_IGNORE` file.
+Теперь `ros_tutorials` клонирован в ваше рабочее пространство. Репозиторий `ros_tutorials` содержит пакет `turtlesim`, который мы будем использовать в остальной части этого руководства. Другие пакеты в этом репозитории не собираются, потому что содержат файл `COLCON_IGNORE`.
 
-So far you have populated your workspace with a sample package, but it isn’t a fully-functional workspace yet. You need to resolve the dependencies first and then build the workspace.
+Пока что вы заполнили свое рабочее пространство примером пакета, но это еще не полностью функциональное рабочее пространство. Вам нужно сначала устранить зависимости, а затем собрать рабочее пространство.
 
-### 4. Resolve dependencies
+### 4. Устранение зависимостей
 
-Before building the workspace, you need to resolve the package dependencies. You may have all the dependencies already, but best practice is to check for dependencies every time you clone. You wouldn’t want a build to fail after a long wait only to realize that you have missing dependencies.
+Перед сборкой рабочего пространства необходимо разрешить зависимости пакета. Возможно, у вас уже есть все зависимости, но лучше всего проверять их при каждом клонировании. Вы же не хотите, чтобы сборка завершилась неудачей после долгого ожидания и только потом выяснилось, что зависимостей не хватает.
 
-From the root of your workspace (`ros2_ws`), run the following command:
+Из корня рабочей области (`ros2_ws`) выполните следующую команду:
 
 ```bash
 # cd if you're still in the ``src`` directory with the ``ros_tutorials`` clone
@@ -53,7 +53,7 @@ cd ..
 rosdep install -i --from-path src --rosdistro humble -y
 ```
 
-If you already have all your dependencies, the console will return:
+Если у вас уже есть все зависимости, консоль вернется:
 
 ```bash
 #All required rosdeps installed successfully
@@ -61,17 +61,17 @@ If you already have all your dependencies, the console will return:
 
 ![003](images/003.png)
 
-Packages declare their dependencies in the package.xml file. This command walks through those declarations and installs the ones that are missing.
+Пакеты объявляют о своих зависимостях в файле package.xml. Эта команда просматривает эти объявления и устанавливает те, которые отсутствуют.
 
-### 5. Build the workspace with colcon
+### 5. Построение рабочего пространства с помощью colcon
 
-From the root of your workspace (`ros2_ws`), you can now build your packages using the command:
+Теперь из корня рабочего пространства (`ros2_ws`) вы можете собрать пакеты с помощью команды:
 
 ```bash
 colcon build
 ```
 
-The console will return the following message:
+Консоль выдаст следующее сообщение:
 
 ```bash
 Starting >>> turtlesim
@@ -80,69 +80,69 @@ Finished <<< turtlesim [5.49s]
 Summary: 1 package finished [5.58s]
 ```
 
-Once the build is finished, enter the command in the workspace root (~/ros2_ws):
+После завершения сборки введите команду в корне рабочей области (~/ros2_ws):
 
 ```bash
 ls
 ```
 
-And you will see that colcon has created new directories:
+И вы увидите, что colcon создал новые каталоги:
 
 ```bash
 build  install  log  src
 ```
 
-The install directory is where your workspace’s setup files are, which you can use to source your overlay.
+В каталоге install находятся установочные файлы рабочей области, которые вы можете использовать для создания оверлея.
 
-### 6. Source the overlay
+### 6. Создание оверлея
 
-Before sourcing the overlay, it is very important that you open a new terminal, separate from the one where you built the workspace. Sourcing an overlay in the same terminal where you built, or likewise building where an overlay is sourced, may create complex issues.
+Перед созданием оверлея очень важно открыть новый терминал, отдельный от того, в котором вы собирали рабочее пространство. Исходное наложение в том же терминале, где вы создавали рабочее пространство, или в том же здании, где создается наложение, может создать сложные проблемы.
 
-In the new terminal, source your main ROS 2 environment as the “underlay”, so you can build the overlay “on top of” it:
+В новом терминале создайте основное окружение ROS 2 в качестве «подложки», чтобы можно было построить оверлей «поверх» него:
 
 ```bash
 source /opt/ros/humble/setup.bash
 ```
 
-Go into the root of your workspace:
+Перейдите в корень рабочей области:
 
 ```bash
 cd ~/ros2_ws
 ```
 
-In the root, source your overlay:
+В корневой части создайте источник оверлея:
 
 ```bash
 source install/local_setup.bash
 ```
 
-Now you can run the turtlesim package from the overlay:
+Теперь вы можете запустить пакет turtlesim из оверлея:
 
 ```bash
 ros2 run turtlesim turtlesim_node
 ```
 
-### 7. Modify the overlay
+### 7. Изменение оверлея
 
-You can modify `turtlesim` in your overlay by editing the title bar on the turtlesim window. To do this, locate the `turtle_frame.cpp` file in `~/ros2_ws/src/ros_tutorials/turtlesim/src`. Open `turtle_frame.cpp` with your preferred text editor.
+Вы можете изменить `turtlesim` в вашем оверлее, отредактировав строку заголовка в окне turtlesim. Для этого найдите файл `turtle_frame.cpp` в каталоге `~/ros2_ws/src/ros_tutorials/turtlesim/src`. Откройте файл `turtle_frame.cpp` в удобном для вас текстовом редакторе.
 
-Find the function `setWindowTitle("TurtleSim");`, change the value `"TurtleSim"` to `"MyTurtleSim"`, and save the file.
+Найдите функцию `setWindowTitle(«TurtleSim»);`, измените значение `«TurtleSim»` на `«MyTurtleSim»` и сохраните файл.
 
-Return to the first terminal where you ran `colcon build` earlier and run it again.
+Вернитесь в первый терминал, где вы ранее запускали `colcon build`, и запустите ее снова.
 
-Return to the second terminal (where the overlay is sourced) and run turtlesim again:
+Вернитесь во второй терминал (где находится оверлей) и снова запустите turtlesim:
 
 ```bash
 ros2 run turtlesim turtlesim_node
 ```
 
-You will see the title bar on the turtlesim window now says “MyTurtleSim”.
+Вы увидите, что в строке заголовка окна turtlesim теперь написано «MyTurtleSim».
 
 ![004](images/004.png)
 
-Even though your main ROS 2 environment was sourced in this terminal earlier, the overlay of your `ros2_ws` environment takes precedence over the contents of the underlay.
+Даже если ваша основная среда ROS 2 была создана в этом терминале ранее, оверлей среды `ros2_ws` имеет приоритет над содержимым подложки.
 
-To see that your underlay is still intact, open a brand new terminal and source only your ROS 2 installation. Run turtlesim again:
+Чтобы убедиться, что ваша подложка не повреждена, откройте новый терминал и создайте только вашу установку ROS 2. Снова запустите turtlesim:
 
 ```bash
 ros2 run turtlesim turtlesim_node
@@ -150,10 +150,10 @@ ros2 run turtlesim turtlesim_node
 
 ![005](images/005.png)
 
-You can see that modifications in the overlay did not actually affect anything in the underlay.
+Видно, что изменения в оверлее фактически не повлияли ни на что в подложке.
 
-## Summary
+## Резюме
 
-In this tutorial, you sourced your main ROS 2 distro install as your underlay, and created an overlay by cloning and building packages in a new workspace. The overlay gets prepended to the path, and takes precedence over the underlay, as you saw with your modified turtlesim.
+В этом уроке вы использовали основную установку дистрибутива ROS 2 в качестве подложки и создали оверлей, клонируя и собирая пакеты в новом рабочем пространстве. Оверлей добавляется к пути и имеет приоритет над подложкой, как вы видели на примере модифицированного turtlesim.
 
-Using overlays is recommended for working on a small number of packages, so you don’t have to put everything in the same workspace and rebuild a huge workspace on every iteration.
+Использование оверлеев рекомендуется при работе над небольшим количеством пакетов, чтобы не размещать все в одном рабочем пространстве и не перестраивать огромное рабочее пространство на каждой итерации.
