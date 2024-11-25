@@ -1,23 +1,23 @@
-### Creating a package
+# Создание пакета
 
-## Background
+## Фон
 
-### 1. What is a ROS 2 package?
+### 1. Что такое пакет ROS 2?
 
-A package is an organizational unit for your ROS 2 code. If you want to be able to install your code or share it with others, then you’ll need it organized in a package. With packages, you can release your ROS 2 work and allow others to build and use it easily.
+Пакет - это организационная единица для вашего кода ROS 2. Если вы хотите, чтобы ваш код можно было установить или поделиться им с другими, то вам нужно организовать его в виде пакета. С помощью пакетов вы можете выпустить свою работу над ROS 2 и позволить другим легко собирать и использовать ее.
 
-Package creation in ROS 2 uses ament as its build system and colcon as its build tool. You can create a package using either CMake or Python, which are officially supported, though other build types do exist.
+Для создания пакетов в ROS 2 используется система сборки ament, а в качестве инструмента сборки - colcon. Вы можете создать пакет, используя CMake или Python, которые официально поддерживаются, хотя существуют и другие типы сборки.
 
-### 2. What makes up a ROS 2 package?
+### 2. Что входит в состав пакета ROS 2?
 
-ROS 2 Python and CMake packages each have their own minimum required contents:
+Пакеты ROS 2 Python и CMake имеют свой минимально необходимый состав:
 
-- `CMakeLists.txt` file that describes how to build the code within the package
-- `include/<package_name>` directory containing the public headers for the package
-- `package.xml` file containing meta information about the package
-- `src` directory containing the source code for the package
+- `CMakeLists.txt` файл, описывающий, как собрать код в пакете
+- `include/<package_name>` каталог, содержащий публичные заголовки для пакета
+- `package.xml` файл, содержащий метаинформацию о пакете
+- `src` каталог, содержащий исходный код пакета
 
-The simplest possible package may have a file structure that looks like:
+Простейший пакет может иметь файловую структуру, которая выглядит следующим образом:
 
 ```bash
 my_package/
@@ -27,13 +27,13 @@ my_package/
      src/
 ```
 
-### 3. Packages in a workspace
+### 3. Пакеты в рабочем пространстве
 
-A single workspace can contain as many packages as you want, each in their own folder. You can also have packages of different build types in one workspace (CMake, Python, etc.). You cannot have nested packages.
+Одно рабочее пространство может содержать столько пакетов, сколько вы хотите, каждый в своей папке. Также в одном рабочем пространстве могут находиться пакеты разных типов сборки (CMake, Python и т. д.). Нельзя иметь вложенные пакеты.
 
-Best practice is to have a src folder within your workspace, and to create your packages in there. This keeps the top level of the workspace “clean”.
+Лучше всего иметь папку src в рабочей области и создавать пакеты в ней. Это позволяет сохранить верхний уровень рабочего пространства «чистым».
 
-A trivial workspace might look like:
+Тривиальное рабочее пространство может выглядеть следующим образом:
 
 ```bash
 workspace_folder/
@@ -58,34 +58,34 @@ workspace_folder/
           src/
 ```
 
-## Tasks
+## Задания
 
-### 1. Create a package
+### 1. Создайте пакет
 
-Let’s use the workspace you created in the previous tutorial, `ros2_ws`, for your new package.
+Давайте используем рабочую область, созданную в предыдущем уроке, `ros2_ws`, для вашего нового пакета.
 
-Make sure you are in the `src` folder before running the package creation command.
+Перед выполнением команды создания пакета убедитесь, что вы находитесь в папке `src`.
 
 ```bash
 cd ~/ros2_ws/src
 ```
 
-The command syntax for creating a new package in ROS 2 is:
+Синтаксис команды для создания нового пакета в ROS 2 следующий:
 
 ```bash
 ros2 pkg create --build-type ament_cmake --license Apache-2.0 <package_name>
 ```
 
-For this tutorial, you will use the optional argument `--node-name` which creates a simple Hello World type executable in the package.
+В этом уроке вы будете использовать необязательный аргумент `--node-name`, который создаст простой исполняемый файл типа Hello World в пакете.
 
-Enter the following command in your terminal:
+Введите в терминале следующую команду:
 
 ```bash
 ros2 pkg create --build-type ament_cmake --license Apache-2.0 --node-name my_node my_package
 ```
-You will now have a new folder within your workspace’s `src` directory called `my_package`.
+Теперь в каталоге `src` вашего рабочего пространства появится новая папка под названием `my_package`.
 
-After running the command, your terminal will return the message:
+После выполнения команды ваш терминал выдаст сообщение:
 
 ```bash
 going to create a new package
@@ -110,27 +110,27 @@ creating ./my_package/src/my_node.cpp
 
 ![006](images/006.png)
 
-You can see the automatically generated files for the new package.
+Вы можете увидеть автоматически сгенерированные файлы для нового пакета.
 
-### 2. Build a package
+### 2. Сборка пакета
 
-Putting packages in a workspace is especially valuable because you can build many packages at once by running `colcon build` in the workspace root. Otherwise, you would have to build each package individually.
+Размещение пакетов в рабочем пространстве особенно ценно тем, что вы можете собирать много пакетов одновременно, выполнив команду `colcon build` в корне рабочего пространства. В противном случае вам пришлось бы собирать каждый пакет по отдельности.
 
-Return to the root of your workspace:
+Вернитесь в корень рабочей области:
 
 ```bash
 cd ~/ros2_ws
 ```
 
-Now you can build your packages:
+Теперь вы можете собирать свои пакеты:
 
 ```bash
 colcon build
 ```
 
-Recall from the last tutorial that you also have the `ros_tutorials` packages in your `ros2_ws`. You might have noticed that running `colcon build` also built the `turtlesim` package. That’s fine when you only have a few packages in your workspace, but when there are many packages, `colcon build` can take a long time.
+Вспомните из предыдущего урока, что в вашей папке `ros2_ws` также есть пакет `ros_tutorials`. Вы могли заметить, что запуск `colcon build` также собрал пакет `turtlesim`. Это хорошо, когда в вашем рабочем пространстве всего несколько пакетов, но когда пакетов много, `colcon build` может занять много времени.
 
-To build only the `my_package` package next time, you can run:
+Чтобы в следующий раз собрать только пакет `my_package`, вы можете выполнить команду:
 
 ```bash
 colcon build --packages-select my_package
@@ -138,46 +138,46 @@ colcon build --packages-select my_package
 
 ![007](images/007.png)
 
-### 3. Source the setup file
+### 3. Источник установочного файла
 
-To use your new package and executable, first open a new terminal and source your main ROS 2 installation.
+Чтобы использовать новый пакет и исполняемый файл, сначала откройте новый терминал и создайте исходный код вашей основной установки ROS 2.
 
-Then, from inside the `ros2_ws` directory, run the following command to source your workspace:
+Затем, находясь в директории `ros2_ws`, выполните следующую команду, чтобы создать исходное рабочее пространство:
 
 ```bash
 source install/local_setup.bash
 ```
 
-Now that your workspace has been added to your path, you will be able to use your new package’s executables.
+Теперь, когда рабочее пространство добавлено в путь, вы сможете использовать исполняемые файлы нового пакета.
 
-### 4. Use the package
+### 4. Использование пакета
 
-To run the executable you created using the `--node-name` argument during package creation, enter the command:
+Чтобы запустить исполняемый файл, который вы создали с помощью аргумента `--node-name` при создании пакета, введите команду:
 
 ```bash
 ros2 run my_package my_node
 ```
 
-Which will return a message to your terminal:
+Это приведет к появлению сообщения на вашем терминале:
 
 ```bash
 hello world my_package package
 ```
 ![008](images/008.png)
 
-### 5. Examine package contents
+### 5. Изучите содержимое пакета
 
-Inside `ros2_ws/src/my_package`, you will see the files and folders that `ros2 pkg create` automatically generated:
+Внутри `ros2_ws/src/my_package` вы увидите файлы и папки, которые `ros2 pkg create` автоматически сгенерировал:
 
 ```bash
 CMakeLists.txt  include  package.xml  src
 ```
 
-### 6. Customize package.xml
+### 6. Настройте файл package.xml
 
-You may have noticed in the return message after creating your package that the fields `description` and `license` contain `TODO` notes. That’s because the package description and license declaration are not automatically set, but are required if you ever want to release your package. The `maintainer` field may also need to be filled in.
+Возможно, вы заметили в ответном сообщении после создания пакета, что поля `description` и `license` содержат пометки `TODO`. Это потому, что описание пакета и декларация лицензии не устанавливаются автоматически, но необходимы, если вы хотите выпустить свой пакет. Поле `maintainer` также может потребоваться заполнить.
 
-From `ros2_ws/src/my_package`, open `package.xml` using your preferred text editor:
+Из папки `ros2_ws/src/my_package` откройте файл `package.xml` с помощью удобного текстового редактора:
 
 ```bash
 <?xml version="1.0"?>
@@ -202,26 +202,26 @@ From `ros2_ws/src/my_package`, open `package.xml` using your preferred text edit
 </package>
 ```
 
-Input your name and email on the maintainer line if it hasn’t been automatically populated for you. Then, edit the description line to summarize the package:
+Введите своё имя и электронную почту в строку сопровождающего, если она не была заполнена автоматически. Затем отредактируйте строку описания, чтобы кратко описать пакет:
 
 ```bash
 <description>Beginner client libraries tutorials practice package</description>
 ```
 
-Then, update the license line. You can read more about open source licenses here. Since this package is only for practice, it’s safe to use any license. We’ll use Apache License 2.0:
+Затем обновите строку лицензии. Подробнее о лицензиях с открытым исходным кодом вы можете прочитать здесь. Поскольку этот пакет предназначен только для практики, можно использовать любую лицензию. Мы будем использовать Apache License 2.0:
 
 ```bash
 <license>Apache License 2.0</license>
 ```
 
-Don’t forget to save once you’re done editing.
+Не забудьте сохранить, когда закончите редактирование.
 
 ![009](images/009.png)
 
-Below the license tag, you will see some tag names ending with _depend. This is where your package.xml would list its dependencies on other packages, for colcon to search for. my_package is simple and doesn’t have any dependencies, but you will see this space being utilized in upcoming tutorials.
+Ниже тега лицензии вы увидите несколько имен тегов, заканчивающихся на _depend. Это место, где ваш package.xml будет перечислять свои зависимости от других пакетов, чтобы colcon мог их искать. my_package прост и не имеет никаких зависимостей, но вы увидите, как это место будет использовано в последующих уроках.
 
-## Summary
+## Резюме
 
-You’ve created a package to organize your code and make it easy to use for others.
+Вы создали пакет, чтобы упорядочить свой код и сделать его удобным для использования другими.
 
-Your package was automatically populated with the necessary files, and then you used colcon to build it so you can use its executables in your local environment.
+Ваш пакет был автоматически заполнен необходимыми файлами, а затем вы использовали colcon для его сборки, чтобы вы могли использовать его исполняемые файлы в своем локальном окружении.
