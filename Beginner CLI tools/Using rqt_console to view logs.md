@@ -1,36 +1,42 @@
 # Using rqt_console to view logs
 
-rqt_console is a GUI tool used to introspect log messages in ROS 2. Typically, log messages show up in your terminal. With rqt_console, you can collect those messages over time, view them closely and in a more organized manner, filter them, save them and even reload the saved files to introspect at a different time.
+**Цель**: познакомиться с rqt_console, инструментом для интроспекции сообщений журнала.
 
-Nodes use logs to output messages concerning events and status in a variety of ways. Their content is usually informational, for the sake of the user.
+# Предыстория
 
-#### 1. Setup
+`rqt_console` - это инструмент с графическим интерфейсом, используемый для просмотра сообщений журнала в ROS 2. Обычно сообщения журнала отображаются в вашем терминале. С помощью `rqt_console` вы можете собирать эти сообщения в течение определенного времени, просматривать их внимательно и более организованно, фильтровать их, сохранять и даже перезагружать сохраненные файлы, чтобы проанализировать их в другое время.
 
-Start `rqt_console` in a new terminal with the following command:
+Узлы используют журналы для вывода сообщений о событиях и состоянии различными способами. Как правило, их содержание носит информационный характер.
 
-```
+# Задачи
+
+## 1. Setup
+
+Запустите `rqt_console` в новом терминале с помощью следующей команды:
+
+```shell
 ros2 run rqt_console rqt_console
 ```
 
 ![1732439803846](image/Usingrqt_consoletoviewlogs/1732439803846.png)
 
-The first section of the console is where log messages from your system will display.
+В первом разделе консоли отображаются сообщения журнала вашей системы.
 
-In the middle you have the option to filter messages by excluding severity levels. You can also add more exclusion filters using the plus-sign button to the right.
+В центре у вас есть возможность отфильтровать сообщения по исключению уровней серьезности. Вы также можете добавить дополнительные фильтры исключений с помощью кнопки со знаком плюс справа.
 
-The bottom section is for highlighting messages that include a string you input. You can add more filters to this section as well.
+Нижний раздел предназначен для выделения сообщений, содержащих введенную вами строку. В этот раздел также можно добавить дополнительные фильтры.
 
-Now start `turtlesim` in a new terminal with the following command:
+Теперь запустите `turtlesim` в новом терминале, выполнив следующую команду:
 
-```
+```shell
 ros2 run turtlesim turtlesim_node
 ```
 
-#### 2. Messages on rqt_console
+## 2. Сообщения в `rqt_console`
 
-To produce log messages for `rqt_console` to display, let's have the turtle run into the wall. In a new terminal, enter the `ros2 topic pub` command  below:
+Чтобы вывести сообщения журнала на экран `rqt_console`, пусть черепаха врежется в стену. В новом терминале введите приведенную ниже команду `ros2 topic pub`:
 
-```
+```shell
 ros2 topic pub -r 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0,y: 0.0,z: 0.0}}"
 ```
 
@@ -38,44 +44,46 @@ ros2 topic pub -r 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, 
 
 ![1732440289587](image/Usingrqt_consoletoviewlogs/1732440289587.png)...
 
-Since the above command is publishing the topic at a steady rate, the turtle is continuously running into the wall. In `rqt_console` you will see the same message with the `Warn` severity level displayed over and over, like so:
+Поскольку приведенная выше команда публикует тему с постоянной скоростью, черепаха постоянно наталкивается на стену. В `rqt_console` вы увидите одно и то же сообщение с уровнем серьезности `Warn`, отображаемое снова и снова, как показано ниже:
 
 ![1732440201661](image/Usingrqt_consoletoviewlogs/1732440201661.png)
 
-Press `Ctrl+C` in the terminal where you ran the `ros2 topic pub` command to stop your turtle from running into the wall.
+Нажмите `Ctrl+C` в терминале, где вы выполняли команду `ros2 topic pub`, чтобы черепаха не врезалась в стену.
 
-#### 3. Logger levels
+## 3. Уровни логгирования
 
-ROS 2's logger levels are ordered by severity:
+Уровни логов в ROS 2 упорядочены по степени серьезности:
 
+```
 Fatal
 Error
 Warn
 Info
 Debug
-
-There is no exact standard for what each level indicates, but it's safe to assume that:
-
-* `Fatal` messages indicate the system is going to terminate to try to protect itself from detriment.
-* `Error` messages indicate significant issues that won't necessarily damage the system, but are preventing it from functioning properly.
-* `Warn` messages indicate unexpected activity or non-ideal results that might represent a deeper issue, but don't harm functionality outright.
-* `Info` messages indicate event and status updates that serve as a visual verification that the system is running as expected.
-* `Debug` messages detail the entire step-by-step process of the system execution.
-
-The default level is `Info`. You will only see messages of the default severity level and more-severe levels.
-
-Normally, only `Debug` messages are hidden because they're the only level less severe than `Info`. For example, if you set the default level to `Warn`, you would only see messages of severity `Warn`, `Error`, and `Fatal`.
-
-#### 3.1 Set the default logger level
-
-You can set the default logger level when you first run the `/turtlesim` node using remapping. Enter the following command in your terminal:
-
 ```
+
+Точного стандарта, что обозначает каждый уровень, не существует, но можно с уверенностью предположить, что:
+
+* `Fatal` Сообщения указывают на то, что система собирается завершить работу, чтобы попытаться защитить себя от негативных последствий.
+* `Error` Сообщения указывают на серьезные проблемы, которые не обязательно приведут к повреждению системы, но мешают ее нормальному функционированию.
+* `Warn` Сообщения указывают на неожиданную активность или неидеальные результаты, которые могут представлять собой более глубокую проблему, но не наносят прямого вреда функциональности.
+* `Info` Сообщения указывают на события и обновления состояния, которые служат визуальным подтверждением того, что система работает в соответствии с ожиданиями.
+* `Debug` сообщения подробно описывают весь пошаговый процесс выполнения системы.
+
+По умолчанию используется уровень `Info`. Вы будете видеть только сообщения стандартного уровня серьезности и более серьезных уровней.
+
+Обычно скрываются только сообщения `Debug`, потому что это единственный уровень, менее серьезный, чем `Info`. Например, если вы установите уровень по умолчанию `Warn`, вы будете видеть только сообщения со степенью серьезности `Warn`, `Error` и `Fatal`.
+
+### 3.1 Установка уровеня логов по умолчанию
+
+Вы можете установить уровень регистратора по умолчанию при первом запуске узла `/turtlesim` с помощью ремаппинга. Введите в терминале следующую команду:
+
+```shell
 ros2 run turtlesim turtlesim_node --ros-args --log-level WARN
 ```
 
-Now you won't see the initial `Info` level messages that came up in the console last time you started `turtlesim`. That's because `Info` messages are lower priority than the new default severity, `Warn`.
+Теперь вы не увидите начальных сообщений уровня `Info`, которые появлялись в консоли при последнем запуске `turtlesim`. Это потому, что сообщения `Info` имеют более низкий приоритет, чем новая серьезность по умолчанию, `Warn`.
 
-#### Summary
+# Summary
 
-`rqt_console` can be very helpful if you need to closely examine the log messages from your system. You might want to examine log messages for any number of reasons, usually to find out where something went wrong and the series of events leading up to that.
+`rqt_console` может быть очень полезен, если вам нужно внимательно изучить сообщения журнала вашей системы. Вы можете захотеть изучить сообщения журнала по разным причинам, обычно для того, чтобы выяснить, где что-то пошло не так и какие события привели к этому.
