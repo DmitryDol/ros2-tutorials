@@ -1,289 +1,176 @@
 # Understanding actions
 
-Actions are one of the communication types in ROS 2 and are intended for long running tasks. They consist of three parts: a goal, feedback, and a result. 
+**Цель**: Интроспективные действия в ROS 2.
 
-Actions are built on topics and services. Their functionality is similar to services, except actions can be canceled. They also provide steady feedback, as opposed to services which return a single response. 
+# Общие сведения
 
-Actions use a client-server model, similar to the publisher-subscriber model . An “action client” node sends a goal to an “action server” node that acknowledges the goal and returns a stream of feedback and a result.
+Действия - это один из типов взаимодействия в ROS 2, который предназначен для выполнения длительных задач. Они состоят из трех частей: цели, обратной связи и результата. 
 
-![1732382217180](image/Understandingactions/1732382217180.png)
+Действия строятся на основе топиков и сервисов. Их функциональность аналогична сервисам, за исключением того, что действия можно отменить. Они также обеспечивают постоянную обратную связь, в отличие от сервисов, которые возвращают один ответ. 
 
-#### 1. Setup
+Действия используют модель клиент-сервер, аналогичную модели издатель-подписчик. Узел «клиент действия» отправляет цель узлу «сервер действия», который подтверждает цель и возвращает поток обратной связи и результат.
 
-Start up the two turtlesim nodes, /turtlesim and /teleop_turtle.
+![1732382217180](image/Understandingactions/Action-SingleActionClient.gif)
 
+# Задачи
 
+## 1. Setup
 
-Open a new terminal and run:
+Запустите два узла turtlesim, `/turtlesim` и `/teleop_turtle`.
 
+Откройте новый терминал и выполните команду:
 
-
-```
+```shell
 ros2 run turtlesim turtlesim_node
 ```
 
-Open another terminal and run:
+Откройте другой терминал и выполните команду:
 
-
-
-```
+```shell
 ros2 run turtlesim turtle_teleop_key
 ```
 
-#### 2. Use actions
+## 2. Используйте действия
 
-When you launch the `/teleop_turtle` node, you will see the following message in your terminal:
+При запуске узла `/teleop_turtle` вы увидите в терминале следующее сообщение:
 
+![1732662473169](image/Understandingactions/1732662473169.png)
 
+Давайте сосредоточимся на второй строке, которая соответствует действию.
 
-```
-Use arrow keys to move the turtle.
-Use G|B|V|C|D|E|R|T keys to rotate to absolute orientations. 'F' to cancel a rotation.
-```
+Обратите внимание, что буквенные клавиши `G|B|V|C|D|E|R|T` образуют "коробку" вокруг клавиши `F` на американской QWERTY-клавиатуре. Положение каждой клавиши вокруг `F` соответствует ее ориентации в turtlesim.
 
+Обратите внимание на терминал, где запущен узел `/turtlesim`. Каждый раз, когда вы нажимаете одну из этих клавиш, вы отправляете цель на сервер действий, который является частью узла `/turtlesim`. Цель состоит в том, чтобы повернуть черепаху лицом в определенном направлении. Как только черепаха завершит вращение, на экране появится сообщение, сообщающее о результате выполнения цели:
 
-
-Let’s focus on the second line, which corresponds to an action. (The first instruction corresponds to the “cmd_vel” topic, discussed previously in the topics tutorial.)
-
-
-
-Notice that the letter keys `G|B|V|C|D|E|R|T` form a “box” around the F key on a US QWERTY keyboard. Each key’s position around F corresponds to that orientation in turtlesim. 
-
-
-
-Pay attention to the terminal where the /turtlesim node is running. Each time you press one of these keys, you are sending a goal to an action server that is part of the /turtlesim node. The goal is to rotate the turtle to face a particular direction. A message relaying the result of the goal should display once the turtle completes its rotation:
-
-
-
-```
+```shell
 [INFO] [turtlesim]: Rotation goal completed successfully
 ```
 
-The `F` key will cancel a goal mid-execution.
+Клавиша `F` отменяет цель в середине ее выполнения.
 
-
-
-Try pressing the `C` key, and then pressing the F key before the turtle can complete its rotation. In the terminal where the `/turtlesim` node is running, you will see the message:
-
-
+Попробуйте нажать клавишу `C`, а затем нажать клавишу `F`, прежде чем черепаха успеет завершить вращение. В терминале, где запущен узел `/turtlesim`, вы увидите сообщение:
 
 ```
 [INFO] [turtlesim]: Rotation goal canceled
 ```
 
-Not only can the client-side (your input in the teleop) stop a goal, but the server-side (the `/turtlesim` node) can as well. When the server-side chooses to stop processing a goal, it is said to “abort” the goal.
+Остановить цель может не только сторона клиента (ввод в `teleop`), но и сторона сервера (узел `/turtlesim`). Когда сторона сервера решает остановить обработку цели, говорят, что цель "прервана".
 
-
-
-Try hitting the `D` key, then the `G` key before the first rotation can complete. In the terminal where the /turtlesim node is running, you will see the message:
-
-
+Попробуйте нажать клавишу `D`, а затем клавишу `G` до того, как завершится первое вращение. В терминале, где запущен узел `/turtlesim`, вы увидите сообщение:
 
 ```
 [WARN] [turtlesim]: Rotation goal received before a previous goal finished. Aborting previous goal
 ```
 
-This action server chose to abort the first goal because it got a new one. It could have chosen something else, like reject the new goal or execute the second goal after the first one finished. Don’t assume every action server will choose to abort the current goal when it gets a new one.
+Этот действующий сервер решил прервать выполнение первой цели, потому что получил новую. Он мог бы выбрать что-то другое, например отклонить новую цель или выполнить вторую цель после завершения первой. Не думайте, что каждый сервер действий решит прервать текущую цель, когда получит новую.
 
-#### 3. ros2 node info
+## 3. `ros2 node info`
 
-To see the list of actions a node provides, `/turtlesim` in this case, open a new terminal and run the command:
+Чтобы увидеть список действий, которые предоставляет узел, в данном случае `/turtlesim`, откройте новый терминал и выполните команду:
 
-```
+```shell
 ros2 node info /turtlesim
 ```
 
-Which will return a list of `/turtlesim`’s subscribers, publishers, services, action servers and action clients:
+Который вернет список подписчиков, издателей, сервисов, серверов действий и клиентов действий `/turtlesim`:
 
-```
-/turtlesim
-  Subscribers:
-    /parameter_events: rcl_interfaces/msg/ParameterEvent
-    /turtle1/cmd_vel: geometry_msgs/msg/Twist
-  Publishers:
-    /parameter_events: rcl_interfaces/msg/ParameterEvent
-    /rosout: rcl_interfaces/msg/Log
-    /turtle1/color_sensor: turtlesim/msg/Color
-    /turtle1/pose: turtlesim/msg/Pose
-  Service Servers:
-    /clear: std_srvs/srv/Empty
-    /kill: turtlesim/srv/Kill
-    /reset: std_srvs/srv/Empty
-    /spawn: turtlesim/srv/Spawn
-    /turtle1/set_pen: turtlesim/srv/SetPen
-    /turtle1/teleport_absolute: turtlesim/srv/TeleportAbsolute
-    /turtle1/teleport_relative: turtlesim/srv/TeleportRelative
-    /turtlesim/describe_parameters: rcl_interfaces/srv/DescribeParameters
-    /turtlesim/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
-    /turtlesim/get_parameters: rcl_interfaces/srv/GetParameters
-    /turtlesim/list_parameters: rcl_interfaces/srv/ListParameters
-    /turtlesim/set_parameters: rcl_interfaces/srv/SetParameters
-    /turtlesim/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
-  Service Clients:
+![1732662829989](image/Understandingactions/1732662829989.png)
 
-  Action Servers:
-    /turtle1/rotate_absolute: turtlesim/action/RotateAbsolute
-  Action Clients:
-```
+Обратите внимание, что действие `/turtle1/rotate_absolute` для `/turtlesim` находится в разделе `Action Servers`. Это означает, что `/turtlesim` реагирует на действие `/turtle1/rotate_absolute` и обеспечивает обратную связь.
 
-Notice that the `/turtle1/rotate_absolute` action for `/turtlesim `is under `Action Servers`. This means `/turtlesim` responds to and provides feedback for the `/turtle1/rotate_absolute` action.
+Узел `/teleop_turtle` имеет имя `/turtle1/rotate_absolute` в разделе `Action Clients`, что означает, что он посылает цели для этого имени действия. Чтобы увидеть это, выполните команду:
 
-The `/teleop_turtle` node has the name `/turtle1/rotate_absolute` under `Action Clients` meaning that it sends goals for that action name. To see that, run:
-
-```
+```shell
 ros2 node info /teleop_turtle
 ```
 
-Which will return:
+![1732662890419](image/Understandingactions/1732662890419.png)
 
-```
-/teleop_turtle
-  Subscribers:
-    /parameter_events: rcl_interfaces/msg/ParameterEvent
-  Publishers:
-    /parameter_events: rcl_interfaces/msg/ParameterEvent
-    /rosout: rcl_interfaces/msg/Log
-    /turtle1/cmd_vel: geometry_msgs/msg/Twist
-  Service Servers:
-    /teleop_turtle/describe_parameters: rcl_interfaces/srv/DescribeParameters
-    /teleop_turtle/get_parameter_types: rcl_interfaces/srv/GetParameterTypes
-    /teleop_turtle/get_parameters: rcl_interfaces/srv/GetParameters
-    /teleop_turtle/list_parameters: rcl_interfaces/srv/ListParameters
-    /teleop_turtle/set_parameters: rcl_interfaces/srv/SetParameters
-    /teleop_turtle/set_parameters_atomically: rcl_interfaces/srv/SetParametersAtomically
-  Service Clients:
+## 4. `ros2 action list`
 
-  Action Servers:
+Чтобы определить все действия в графе ROS, выполните команду:
 
-  Action Clients:
-    /turtle1/rotate_absolute: turtlesim/action/RotateAbsolute
-```
-
-#### 4. ros2 action list
-
-To identify all the actions in the ROS graph, run the command:
-
-```
+```shell
 ros2 action list
 ```
 
-Which will return:
+![1732662941250](image/Understandingactions/1732662941250.png)
 
-`/turtle1/rotate_absolute`
+Это единственное действие в графике ROS на данный момент. Оно управляет вращением черепахи, как вы видели ранее. Вы также уже знаете, что существует один клиент действия (часть `/teleop_turtle`) и один сервер действия (часть `/turtlesim`) для этого действия из команды `ros2 node info <node_name>`.
 
-This is the only action in the ROS graph right now. It controls the turtle’s rotation, as you saw earlier. You also already know that there is one action client (part of `/teleop_turtle`) and one action server (part of `/turtlesim`) for this action from using the `ros2 node info <node_name> `command.
+## 4.1. `ros2 action list -t`
 
-#### 4.1. ros2 action list -t
+У действий есть типы, как у тем и услуг. Чтобы найти тип действия `/turtle1/rotate_absolute`, выполните команду:
 
-Actions have types, similar to topics and services. To find `/turtle1/rotate_absolute`’s type, run the command:
-
-
-
-```
+```shell
 ros2 action list -t
 ```
 
-Which will return:
+![1732663061183](image/Understandingactions/1732663061183.png)
 
+В скобках справа от имени каждого действия (в данном случае только `/turtle1/rotate_absolute`) указан тип действия, `turtlesim/action/RotateAbsolute`.
 
+## 5. `ros2 action info`
 
-```
-/turtle1/rotate_absolute [turtlesim/action/RotateAbsolute]
-```
+Вы можете дополнительно проанализировать действие `/turtle1/rotate_absolute` с помощью команды:
 
-In brackets to the right of each action name (in this case only `/turtle1/rotate_absolute`) is the action type, `turtlesim/action/RotateAbsolute`. You will need this when you want to execute an action from the command line or from code.
-
-#### 5. ros2 action info
-
-You can further introspect the `/turtle1/rotate_absolute` action with the command:
-
-```
+```shell
 ros2 action info /turtle1/rotate_absolute
 ```
 
-Which will return
+![1732663146275](image/Understandingactions/1732663146275.png)
 
-```
-Action: /turtle1/rotate_absolute
-Action clients: 1
-    /teleop_turtle
-Action servers: 1
-    /turtlesim
-```
+Это говорит нам о том, что мы узнали ранее, запустив `ros2 node info` на каждом узле: Узел `/teleop_turtle` имеет клиент действия, а узел `/turtlesim` имеет сервер действия для действия `/turtle1/rotate_absolute`.
 
-This tells us what we learned earlier from running `ros2 node info` on each node: The `/teleop_turtle` node has an action client and the `/turtlesim` node has an action server for the `/turtle1/rotate_absolute` action.
+## 6. `ros2 interface show`
 
-#### 6. ros2 interface show
+Еще одна информация, которая вам понадобится перед отправкой или выполнением цели действия - это структура типа действия.
 
-One more piece of information you will need before sending or executing an action goal yourself is the structure of the action type.
-
-Recall that you identified `/turtle1/rotate_absolute`'s type when running the command `ros2 action list -t`. Enter the following command with the action type in your terminal:
-
-```
+```shell
 ros2 interface show turtlesim/action/RotateAbsolute
 ```
 
 Which will return:
 
-```
-# The desired heading in radians
-float32 theta
----
-# The angular displacement in radians to the starting position
-float32 delta
----
-# The remaining rotation in radians
-float32 remaining
-```
+![1732663227841](image/Understandingactions/1732663227841.png)
 
-The section of this message above the first `---` is the structure (data type and name) of the goal request. The next section is the structure of the result. The last section is the structure of the feedback.
+Раздел этого сообщения над первым `---` - это структура (тип данных и имя) запроса цели. Следующий раздел - это структура результата. Последняя секция - структура обратной связи.
 
-#### 7. ros2 action send_goal
+## 7. `ros2 action send_goal`
 
-Now let's send an action goal from the command line with the following syntax:
+Теперь давайте отправим цель действия из командной строки со следующим синтаксисом:
 
-```
+```shell
 ros2 action send_goal <action_name> <action_type> <values>
 ```
 
-`<values>` need to be in YAML format.
+`<values>` должны быть в формате YAML.
 
-Keep an eye on the turtlesim window, and enter the following command into your terminal:
+Следите за окном turtlesim и введите в терминале следующую команду:
 
-```
+```shell
 ros2 action send_goal /turtle1/rotate_absolute turtlesim/action/RotateAbsolute "{theta: 1.57}"
 ```
 
-You should see the turtle rotating, as well as the following message in your terminal:
+Вы должны увидеть вращение черепахи, а также следующее сообщение в терминале:
 
-```
-Waiting for an action server to become available...
-Sending goal:
-     theta: 1.57
+![1732663346253](image/Understandingactions/1732663346253.png)
 
-Goal accepted with ID: 064da01750334e90a659e6b226d4c5a2
+Все цели имеют уникальный идентификатор, который отображается в ответном сообщении. Вы также можете увидеть результат - поле с именем `delta`, которое представляет собой смещение к начальной позиции.
 
-Result:
-    delta: -1.5520000457763672
+Чтобы увидеть обратную связь по этой цели, добавьте `--feedback` к команде `ros2 action send_goal`:
 
-Goal finished with status: SUCCEEDED
-```
-
-All goals have a unique ID, shown in the return message. You can also see the result, a field with the name `delta`, which is the displacement to the starting position.
-
-To see the feedback of this goal, add `--feedback` to the `ros2 action send_goal` command:
-
-```
+```shell
 ros2 action send_goal /turtle1/rotate_absolute turtlesim/action/RotateAbsolute "{theta: -1.57}" --feedback
 ```
 
 Your terminal will return the message:
 
 ```
- delta: 3.1040000915527344Sending goal:
-   theta: -1.57
+Sending goal:
+     theta: -1.57
 
-Goal accepted with ID: 463e01f5df6941c5bcd5d425e35319ba
+Goal accepted with ID: 94822f76d49f496d8854d0dfe6de8c87
 
 Feedback:
     remaining: -3.122000217437744
@@ -294,17 +181,16 @@ Feedback:
 …
 
 Result:
-  delta: 3.1200008392333984
+    delta: 3.1040000915527344
 
 Goal finished with status: SUCCEEDED
 ```
 
-You will continue to receive feedback, the remaining radians, until the goal is complete.
 
-#### Summary
+# Резюме
 
-Actions are like services that allow you to execute long running tasks, provide regular feedback, and are cancelable.
+Действия похожи на сервисы, которые позволяют выполнять длительные задачи, обеспечивают регулярную обратную связь и могут быть отменены.
 
-A robot system would likely use actions for navigation. An action goal could tell a robot to travel to a position. While the robot navigates to the position, it can send updates along the way (i.e. feedback), and then a final result message once it's reached its destination.
+Роботизированная система, скорее всего, будет использовать действия для навигации. Цель действия может предписывать роботу отправиться в определенное место. Пока робот добирается до места, он может отправлять обновления по пути (т. е. обратную связь), а затем сообщение о конечном результате, когда он достигнет места назначения.
 
-Turtlesim has an action server that action clients can send goals to for rotating turtles. In this tutorial, you introspected that action, `/turtle1/rotate_absolute`, to get a better idea of what actions are and how they work.
+В Turtlesim есть сервер действий, на который клиенты действий могут отправлять цели для вращения черепашек. В этом уроке вы проанализировали действие `/turtle1/rotate_absolute`, чтобы лучше понять, что такое действия и как они работают.
