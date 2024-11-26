@@ -1,47 +1,53 @@
 # Launching nodes
 
-In most of the introductory tutorials, you have been opening new terminals for every new node you run. As you create more complex systems with more and more nodes running simultaneously, opening terminals and reentering configuration details becomes tedious.
+**Цель**: Использовать инструмент командной строки для одновременного запуска нескольких узлов
 
-Launch files allow you to start up and configure a number of executables containing ROS 2 nodes simultaneously.
+# Общие сведения
 
-Running a single launch file with the `ros2 launch` command will start up your entire system - all nodes and their configurations - at once.
+В большинстве вводных уроков мы открывали новые терминалы для каждого нового запущенного узла. По мере создания более сложных систем с большим количеством одновременно работающих узлов открытие терминалов и повторный ввод конфигурационных данных становится утомительным.
 
-#### 1. Running a Launch File
+Файлы запуска позволяют одновременно запускать и настраивать несколько исполняемых файлов, содержащих узлы ROS 2.
 
-Open a new terminal and run:
+Запуск одного файла запуска с помощью команды `ros2 launch` запустит всю вашу систему - все узлы и их конфигурации - одновременно.
 
-```
+# Задачи
+
+## 1. Запуск файла запуска
+
+Откройте новый терминал и выполните команду:
+
+```shell
 ros2 launch turtlesim multisim.launch.py
 ```
 
-This command will run the following launch file:
+Эта команда запустит следующий файл запуска:
 
 ![1732442454654](image/Launchingnodes/1732442454654.png)
 
-This will run two turtlesim nodes:
+Это позволит запустить два узла turtlesim:
 
 ![1732442535207](image/Launchingnodes/1732442535207.png)
 
-#### 2. Control the Turtlesim Nodes
+## 2. Управление узлами Turtlesim
 
-Now that these nodes are running, you can control them like any other ROS 2 nodes. For example, you can make the turtles drive in opposite directions by opening up two additional terminals and running the following commands:
+Теперь, когда эти узлы запущены, вы можете управлять ими, как и любыми другими узлами ROS 2. Например, вы можете заставить черепашек двигаться в противоположных направлениях, открыв два дополнительных терминала и выполнив следующие команды:
 
-In the second terminal:
+Во втором терминале:
 
-```
+```shell
 ros2 topic pub  /turtlesim1/turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: 1.8}}"
 ```
 
-In the third terminal:
+В третьем терминале:
 
-```
+```shell
 ros2 topic pub  /turtlesim2/turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 2.0, y: 0.0, z: 0.0}, angular: {x: 0.0, y: 0.0, z: -1.8}}"
 ```
 
-After running these commands, you should see something like the following:
+После выполнения этих команд вы должны увидеть что-то вроде следующего:
 
 ![1732442700790](image/Launchingnodes/1732442700790.png)
 
-#### Summary
+# Резюме
 
-The significance of what you've done so far is that you've run two turtlesim nodes with one command. Once you learn to write your own launch files, you'll be able to run multiple nodes - and set up their configuration - in a similar way, with the `ros2 launch` command.
+Важность того, что вы сделали до сих пор, заключается в том, что вы запустили два узла turtlesim с помощью одной команды. Когда вы научитесь писать собственные файлы запуска, вы сможете запускать несколько узлов - и настраивать их конфигурацию - аналогичным образом, с помощью команды `ros2 launch`.
