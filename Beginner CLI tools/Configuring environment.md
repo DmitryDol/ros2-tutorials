@@ -1,34 +1,39 @@
 # Configuring environment
 
-**Goal**: Learn how to prepare your ROS 2 environment
+**Цель**: Настроить окружение ROS 2 для работы. 
 
-## 1. Source the setup files
+ROS 2 основывается на идее комбинирования рабочих пространств. «Рабочее пространство» (Workspace) – особый термин использующийся в ROS 2, обозначающий каталог, где располагаются все пакеты ROS 2 
+Основное рабочее пространство называется андерлэй (underlay). Дополнительные же рабочие пространства называются оверлэями (overlay). Разрабатывая на ROS 2 вы часто будете иметь дело с несколькими активными рабочими пространствами одновременно.
+Использование рабочих пространств облегчает использования разных версий ROS 2 или разных наборов пакетов. Это  также позволяет устанавливать различные дистрибутивы ROS 2 на один компьютер и переключаться между ними.
 
-Run this command on every new shell you open to have access to the ROS 2 commands, like so:
+
+## 1. Запуск setup-файла
+
+Чтобы выполнять команды ROS 2 при запуске каждого нового процесса оболочки необходимо выполнить команду:
 
 ```shell
 source /opt/ros/humble/setup.bash
 ```
 
-## 2. Add sourcing to your shell startup script
+## 2. Автоматизация запуска setup-файла при запуске оболочки
 
-If you don’t want to have to source the setup file every time you open a new shell (skipping task 1), then you can add the command to your shell startup script:
+Для того, чтобы не запускать setup-файл при каждом новом открытии оболочки, можно добавить его в список автозапуска оболочки. Для этого на Linux необходимо выполнить команду:
 
 ```shell
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 ```
 
-> To undo this, locate your system`s shell startup script and remove the appended source command.
+> Чтобы отменить это, найдите сценарий запуска оболочки вашей системы и удалите добавленную команду.
 
-## 3. Check environment variables
+## 3. Проверка переменных среды
 
-Sourcing ROS 2 setup files will set several environment variables necessary for operating ROS 2. If you ever have problems finding or using your ROS 2 packages, make sure that your environment is properly set up using the following command:
+Если у вас возникнут проблемы с поиском или использованием пакетов ROS 2, убедитесь, что ваше окружение правильно настроено, выполнив следующую команду:
 
 ```shell
 printenv | grep -i ROS
 ```
 
-Check that variables like ROS_DISTRO and ROS_VERSION are set.
+Необходимо проверить, что установлены переменные:
 
 ```shell
 ROS_VERSION=2
@@ -36,9 +41,12 @@ ROS_PYTHON_VERSION=3
 ROS_DISTRO=humble
 ```
 
-### 3.1 The `ROS_DOMAIN_ID` variable
+### 3.1 Переменная `ROS_DOMAIN_ID` 
 
-Once you have determined a unique integer for your group of ROS 2 nodes, you can set the environment variable with the following command:
+ROS_DOMAIN_ID – уникальный номер для группы узлов (nodes) ROS 2. Рекомендуется использовать любое число от 0 до 101 (включительно). По умолчанию ROS_DOMAIN_ID = 0. При необходимости работать с ROS 2 по сети можно сконфигурировать эту переменную, используя команды оболочки.
+
+
+Установить ROS_DOMAIN_ID можно с помощью следующей команды:
 
 ```shell
 echo "export ROS_DOMAIN_ID=42" >> ~/.bashrc
@@ -46,7 +54,9 @@ echo "export ROS_DOMAIN_ID=42" >> ~/.bashrc
 
 ### 3.2 The `ROS_LOCALHOST_ONLY` variable
 
-By default, ROS 2 communication is not limited to localhost. ROS_LOCALHOST_ONLY environment variable allows you to limit ROS 2 communication to localhost only. This means your ROS 2 system, and its topics, services, and actions will not be visible to other computers on the local network. Using ROS_LOCALHOST_ONLY is helpful in certain settings, such as classrooms, where multiple robots may publish to the same topic causing strange behaviors. You can set the environment variable with the following command:
+По умолчанию коммуникация в ROS2 происходит в том числе в локальной сети. Это может мешать при работе в сети, где другие пользователи также используют ROS. Во избежание этой проблемы необходимо установить переменную ROS_LOCALHOST_ONLY=1.
+
+Установить ROS_LOCALHOST_ONLY можно с помощью следующей команды:
 
 ```shell
 echo "export ROS_LOCALHOST_ONLY=1" >> ~/.bashrc
