@@ -1,8 +1,18 @@
-![1732384494258](image/Usingturtlesim,ros2,andrqt/1732384494258.png)# Using `turtlesim`, `ros2`, and `rqt`
+# Using `turtlesim`, `ros2`, and `rqt`
 
-**Goal**: Install and use the turtlesim package and rqt tools to prepare for upcoming tutorials.
+![1732384494258](image/Usingturtlesim,ros2,andrqt/1732384494258.png)
 
-## 1 Install turtlesim
+**Цель**: Установить и использовать пакет `turtlesim` и инструменты `rqt` для подготовки к предстоящим учебным занятиям.
+
+Turtlesim – небольшой симулятор для изучения ROS 2. Он на самом простом уровне показывает возможности ROS 2, обучая идеям, которые лежат в основе создания реального робота и его симуляции.
+
+Ros2 tool --  это средство управления ROS 2. Оно поддерживает множество команд, относящихся к разным аспектам системы и её работы. Можно использовать ros2 tool для создания узла, установки параметра и много другого. Ros2 tool устанавливается вместе с ROS 2.
+
+Rqt – графический пользовательский интерфейс для ROS 2. Все, что можно сделать в rqt, можно выполнить также используя командную строку, но rqt предлагает более понятный пользователю интерфейс.
+
+## 1 Установка `turtlesim`
+
+Для установки `turtlesim` выполняется команда:
 
 ```shell
 sudo apt update
@@ -10,17 +20,23 @@ sudo apt update
 sudo apt install ros-humble-turtlesim
 ```
 
-Check that the package is installed:
+Для проверки, установлен ли `turtlesim` можно выполнить команду:
 
 ```shell
 ros2 pkg executables turtlesim
 ```
 
-> The above command should return a list of turtlesim’s executables:
+> Если `turtulesim` действительно установлен, эта комманда вернет список исполняемых файлов:
+> ```shell
+> turtlesim draw_square
+> turtlesim mimic
+> turtlesim turtle_teleop_key
+> turtlesim turtlesim_node
+> ```
 
-## 2 Start turtlesim
+## 2 Запуск `turtlesim`
 
-To start turtlesim, enter the following command in your terminal:
+Чтобы запустить `turtlesim`, необходимо ввести следующую команду:
 
 ```shell
 ros2 run turtlesim turtlesim_node
@@ -28,30 +44,28 @@ ros2 run turtlesim turtlesim_node
 
 ![1732384494258](image/Usingturtlesim,ros2,andrqt/1732384494258.png)
 
-In the terminal, under the command, you will see messages from the node:
+В результате этого откроется окошко с черепахой в центре, а в консоли будет выведена информация о запуске и создании черепахи в некоторых координатах:
 
 ```shell
 [INFO] [turtlesim]: Starting turtlesim with node name /turtlesim
 [INFO] [turtlesim]: Spawning turtle [turtle1] at x=[5.544445], y=[5.544445], theta=[0.000000]
 ```
 
-## 3 Use turtlesim
+## 3 Использвание `turtlesim`
 
-Open a new terminal and source ROS 2 again.
-
-Now run a new node to control the turtle in the first node:
+Открываем новый терминал и запускаем новый узел для контроля черепахи:
 
 ```shell
 ros2 run turtlesim turtle_teleop_key
 ```
 
-At this point you should have three windows open: a terminal running turtlesim_node, a terminal running turtle_teleop_key and the turtlesim window. Arrange these windows so that you can see the turtlesim window, but also have the terminal running turtle_teleop_key active so that you can control the turtle in turtlesim.
+В этот момент у нас открыто 3 окна: 2 окна с запущенной оболочкой и одно – визуальное представление turtlesim с черепахой в центе.
 
-Use the arrow keys on your keyboard to control the turtle. It will move around the screen, using its attached “pen” to draw the path it followed so far.
+Теперь можно управлять черепахой используя стрелки на клавиатуре. Черепаха будет перемещаться по экрану оставляя за собой след.
 
-## 4 Install rqt
+## 4 Установка `rqt`
 
-Open a new terminal to install `rqt` and its plugins:
+На Linux, для установки `rqt` необходимо выполнить:
 
 ```shell
 sudo apt update
@@ -59,70 +73,80 @@ sudo apt update
 sudo apt install '~nros-humble-rqt*'
 ```
 
-To run rqt:
+Чтобы запустить rqt:
 
 ```shell
 rqt
 ```
 
-## 5 Use rqt
+## 5 Использование rqt
 
-При первом запуске rqt, окно будет пустым. Выберите Plugins > Services > Service Caller в меню rqt.
+При первом запуске rqt, окно будет пустым. Выберите `Plugins > Services > Service Caller` в меню rqt.
 
 ![1732385384988](image/Usingturtlesim,ros2,andrqt/1732385384988.png)
 
-### 5.1 Try the spawn service
+Чтобы убедиться что все сервисы узла `turtlesim` доступны необходимо нажать на кнопку «обновление» (синяя кнопка с круглой стрелкой), расположенную слева от выпадающего меню.
+Далее необходимо нажать на выпадающее меню сервисов, чтобы увидеть все сервисы `turtlesim`. Затем нужно выбрать сервис `/spawn`.
 
-Use rqt to call the `/spawn` service. `/spawn` will create another turtle in the turtlesim window.
+### 5.1 Пробуем пользоваться сервисом `/spawn`
 
-Let `s give new turtle a name, like: turtle2. Next entre some valid coordinates, like: `x = 1.0 ` and` y = 1.0`.
+С помощью rqt вызовите сервис `/spawn`. `/spawn` создаст еще одну черепаху в окне `turtlesim`.
+
+Давайте дадим новой черепашке имя, например: `turtle2`. Затем введем некоторые правильные координаты, например: `x = 1.0` и `y = 1.0`.
 
 ![1732447390525](image/Usingturtlesim,ros2,andrqt/1732447390525.png)
 
-> If you try to spawn a new turtle with the same name as an existing turtle, like the default turtle1, you will get an error message in the terminal running turtlesim_node:
+> Если вы попытаетесь создать новую черепаху с тем же именем, что и существующая, например, черепаха по умолчанию turtle1, вы получите сообщение об ошибке в терминале, в котором запущен turtlesim_node:
 
 > ```shell
 > [ERROR] [turtlesim]: A turtle named [turtle1] already exists
 > ```
 
-To spawn turtle2, you then need to call the service by clicking the Call button on the upper right side of the rqt window.
+Чтобы создать вторую черепаху необходимо вызвать сервис. Это можно сделать нажав на кнопку `Call` в правом верхнем углу окна `rqt`.
 
-If the service call was successful, you should see a new turtle (again with a random design) spawn at the coordinates you input for x and y.
+
+При успешном вызове сервиса в окне `turtlesim` появляется новая черепаха (немного не такая, как прежняя), в указаных нами координатах.
+
 
 ![1732447549094](image/Usingturtlesim,ros2,andrqt/1732447549094.png)
 
-If you refresh the service list in rqt, you will also see that now there are services related to the new turtle, `/turtle2/...`, in addition to `/turtle1/...`.
+Если снова обновить список сервисов в окне `rqt`, можно заметить новые сервисы, связанные с созданной черепахой, расположенные в подкатегории `/turtle2/…`, в дополнении к сервисам в категории `/turtle1/…`.
 
-### 5.2 Try the set_pen service
+### 5.2 Пробуем пользоваться сервисом `/set_pen`
 
-Now let’s give turtle1 a unique pen using the `/set_pen` service:
+Используя сервис `/set_pen` можно дать черепахе уникальную ручку (инструмент рисующих хвост за черепахой, а как вы думали он появлялся раньше?). 
 
 ![1732447718072](image/Usingturtlesim,ros2,andrqt/1732447718072.png)
 
-The values for r, g and b, which are between 0 and 255, set the color of the pen turtle1 draws with, and width sets the thickness of the line.
+В параметрах `/set_pen` можно указать значения `r`, `g`, `b` для цвета ручки (заметьте что они имеют тип `uint8`, принимая при этом значения от 0 до 255), а также `width`, параметр устанавливающий толщину линии.
 
-To have turtle1 draw with a distinct red line, change the value of r to 255, and the value of width to 5. Don't forget to call the service after updating the values.
+Например, чтобы заставить черепаху «рисовать» при движении красной линией, можно установить следующие параметры:
 
-If you return to the terminal where turtle_teleop_key is running and press the arrow keys, you will see turtle1's pen has changed.
+`r = 255, g = 0, b = 0, width = 5`.
+
+При этом нужно не забыть вызвать настроенный нами сервис.
+
+После этого можно вернуться в терминал с запущенным `turtle_teleop_key` и убедиться, что параметры успешно обновлены, а черепаха действительно оставляет красный след, пробуя управлять черепахой с клавиатуры.
+
 
 ![1732447754272](image/Usingturtlesim,ros2,andrqt/1732447754272.png)
 
-You've probably also noticed that there's no way to move `turtle2`. That's because there is no teleop node for `turtle2`.
+Возможно вы также заметили, что пока никак нельзя управлять второй черепахой. Так происходит, потому что для неё пока не существует узла `teleop`.
 
-## 6 Remapping
+## 6 Переназначение [узла teleop]
 
-You need a second teleop node in order to control `turtle2`. However, if you try to run the same command as before, you will notice that this one also controls `turtle1`. The way to change this behavior is by remapping the `cmd_vel` topic.
+Для управления второй черепахой необходим новый узел `teleop`. Однако создав новый такой узел, пользуясь инструкцией выше, можно убедиться в том, что он также управляет первой черепахой. Для изменение его поведения необходимо переназначить топик `cmd_vel`.
 
-In a new terminal, source ROS 2, and run:
+Для этого в новом терминале нужно запустить следующую строчку:
 
 ```shell
 ros2 run turtlesim turtle_teleop_key --ros-args --remap turtle1/cmd_vel:=turtle2/cmd_vel
 ```
 
-Now, you can move `turtle2` when this terminal is active, and `turtle1` when the other terminal running `turtle_teleop_key` is active.
+Теперь мы можем перемещать вторую черепаху, когда активно окно нового терминала, и старую — когда активно окно терминала с запущенным ранее узлом `turtle_teleop_key`.
 
 ![1732447975165](image/Usingturtlesim,ros2,andrqt/1732447975165.png)
 
-## 7 Close turtlesim
+## 7 Закрываем `turtlesim`
 
-To stop the simulation, you can enter `Ctrl + C` in the `turtlesim_node` terminal, and `q` in the `turtle_teleop_key` terminals.
+Чтобы остановить симуляцию, можно нажать `ctrl + c` в терминале с `telesim` и `q` в терминалах с `turtle_teleop_key`.
