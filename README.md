@@ -24,3 +24,12 @@
 - [Написание простого сервиса и клиента (C++)](Beginner.%20Client%20libraries/Writing%20a%20simple%20service%20(C%2B%2B).md)
 - [Написание простого сервиса и клиента (Python)](Beginner.%20Client%20libraries/Writing%20a%20simple%20service%20(Python).md)
 - [Создание пользовательских msg и srv файлов](Beginner.%20Client%20libraries/Creating%20custom%20msg%20and%20srv%20files.md)
+- [Реализация кастомных интерфейсов](Beginner.%20Client%20libraries/Implementing%20custom%20interfaces.md)
+- [Использование параметров в классе](Beginner.%20Client%20libraries/Using%20parameters%20in%20a%20class%20(Python).md)
+- [Использование ros2doctor для определения проблем](Beginner.%20Client%20libraries/Using%20ros2doctor%20to%20identify%20issues.md)
+
+### Intermediate
+
+- [Управление зависимостями с помощью rosdep](Intermediate/Managing%20Dependencies%20with%20rosdep.md)
+- [Создание действия](Intermediate/Creating%20an%20action.md)
+- [Написание сервера и клиента действий на Python](Intermediate/Writing%20an%20action%20server%20and%20client.md)
