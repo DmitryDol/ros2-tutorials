@@ -1,148 +1,152 @@
 # Recording and playing back data
 
-`ros2 bag` is a command line tool for recording data published on topics in your system. It accumulates the data passed on any number of topics and saves it in a database. You can then replay the data to reproduce the results of your tests and experiments. Recording topics is also a great way to share your work and allow others to recreate it.
+**Цель**: Записывать данные, опубликованные по топику, чтобы в любой момент можно было воспроизвести и изучить их.
 
-#### 1. Setup
+# Общие сведения
 
-You'll be recording your keyboard input in the `turtlesim` system to save and replay later on, so begin by starting up the `/turtlesim` and `/teleop_turtle` nodes.
+`ros2 bag` - это инструмент командной строки для записи данных, опубликованных в топиках в вашей системе. Он накапливает данные, переданные по любому количеству топиков, и сохраняет их в базе данных. Затем вы можете воспроизвести эти данные для воспроизведения результатов ваших тестов и экспериментов. Запись топиков - это также отличный способ поделиться своими наработками и дать возможность другим воссоздать их.
 
-Open a new terminal and run:
+# Задачи
 
-```
+## 1. Setup
+
+Вы будете записывать ввод с клавиатуры в системе `turtlesim`, чтобы сохранить и воспроизвести его позже, поэтому начните с запуска узлов `/turtlesim` и `/teleop_turtle`.
+
+Откройте новый терминал и выполните команду:
+
+```shell
 ros2 run turtlesim turtlesim_node
 ```
 
-Open another terminal and run:
+Откройте другой терминал и выполните команду:
 
-```
+```shell
 ros2 run turtlesim turtle_teleop_key
 ```
 
-Let's also make a new directory to store our saved recordings:
+Давайте также создадим новую директорию для хранения сохраненных записей:
 
 ![1732445864070](image/Recordingandplayingbackdata/1732445864070.png)
 
-#### 2. Choose a topic
+## 2. Выберите топик
 
-`ros2 bag` can only record data from published messages in topics. To see the list of your system's topics, open a new terminal and run the command:
+`ros2 bag` может записывать данные из опубликованных сообщений только в топики. Чтобы просмотреть список топиков вашей системы, откройте новый терминал и выполните команду:
 
-```
+```shell
 ros2 topic list
 ```
 
-Which will return:
-
 ![1732446107213](image/Recordingandplayingbackdata/1732446107213.png)
 
-In the topics tutorial, you learned that the `/turtle_teleop` node publishes commands on the `/turtle1/cmd_vel` topic to make the turtle move in turtlesim.
+Как мы узнали ранее, узел `/turtle_teleop` публикует команды в топике `/turtle1/cmd_vel`, чтобы заставить черепаху двигаться в turtlesim.
 
-To see the data that `/turtle1/cmd_vel` is publishing, run the command:
+Чтобы увидеть данные, которые публикует тема `/turtle1/cmd_vel`, выполните команду:
 
-```
+```shell
 ros2 topic echo /turtle1/cmd_vel
 ```
 
-Nothing will show up at first because no data is being published by the teleop. Return to the terminal where you ran the teleop and select it so it's active. Use the arrow keys to move the turtle around, and you will see data being published on the terminal running `ros2 topic echo`.
+Сначала ничего не появится, потому что `teleop` не публикует никаких данных. Вернитесь на терминал, где вы запустили `teleop`, и выберите его, чтобы он стал активным. Используйте клавиши со стрелками, чтобы перемещать черепашку, и вы увидите, что данные публикуются на терминале, где запущена `ros2 topic echo`.
 
 ![1732446325381](image/Recordingandplayingbackdata/1732446325381.png)
 
-#### 3. ros2 bag record
+## 3. `ros2 bag record`
 
-#### 3.1. Record a single topic
+## 3.1. Запись одного топика
 
-To record the data published to a topic use the command syntax:
+Чтобы записать данные, опубликованные в топике, используйте синтаксис команды:
 
-```
+```shell
 ros2 bag record <topic_name>
 ```
 
-Before running this command on your chosen topic, open a new terminal and move into the `bag_files` directory you created earlier, because the rosbag file will save in the directory where you run it.
+Перед выполнением этой команды на выбранном вами топике откройте новый терминал и перейдите в каталог `bag_files`, который вы создали ранее, потому что файл rosbag будет сохранен в том каталоге, в котором вы его запустили.
 
-Run the command:
+Выполните команду:
 
-```
+```shell
 ros2 bag record /turtle1/cmd_vel
 ```
 
-You will see the following messages in the terminal:
+В терминале вы увидите следующие сообщения:
 
 ![1732446631075](image/Recordingandplayingbackdata/1732446631075.png)
 
-Now `ros2 bag` is recording the data published on the `/turtle1/cmd_vel` topic. Return to the teleop terminal and move the turtle around again. The movements don't matter, but try to make a recognizable pattern to see when you replay the data later.
+Теперь `ros2 bag` записывает данные, опубликованные в топике `/turtle1/cmd_vel`. Вернитесь к телеоп-терминалу и снова подвигайте черепаху. Движения не имеют значения, но постарайтесь создать узнаваемую картину, чтобы увидеть ее при последующем воспроизведении данных.
 
 ![1732448331123](image/Recordingandplayingbackdata/1732448331123.png)
 
-Press `Ctrl+C` to stop recording.
+Нажмите `Ctrl+C`, чтобы остановить запись.
 
-The data will be accumulated in a new bag directory with a name in the pattern of `rosbag2_year_month_day-hour_minute_second`. This directory will contain a `metadata.yaml` along with the bag file in the recorded format.
+Данные будут накоплены в новом каталоге bag с именем по шаблону `rosbag2_год_месяц_день_час_минута_секунда`. Этот каталог будет содержать `metadata.yaml` вместе с файлом bag в записанном формате.
 
 ![1732446846501](image/Recordingandplayingbackdata/1732446846501.png)
 
-#### 3.2. Record multiple topics
+## 3.2. Запись нескольких топиков
 
-You can also record multiple topics, as well as change the name of the file `ros2 bag` saves to.
+Вы можете записать несколько топиков, а также изменить имя файла, в который сохраняется `ros2 bag`.
 
-Run the following command:
+Выполните следующую команду:
 
-```
+```shell
 ros2 bag record -o subset /turtle1/cmd_vel /turtle1/pose
 ```
 
-The `-o` option allows you to choose a unique name for your bag file. The following string, in this case `subset`, is the file name.
+Опция `-o` позволяет выбрать уникальное имя для файла мешка. Следующая строка, в данном случае `subset`, является именем файла.
 
-To record more than one topic at a time, simply list each topic separated by a space.
+Чтобы записать несколько топиков одновременно, просто перечислите их через пробел.
 
-You will see the following message, confirming that both topics are being recorded.
+Вы увидите следующее сообщение, подтверждающее, что записываются оба топика.
 
 ![1732447131914](image/Recordingandplayingbackdata/1732447131914.png)
 
-You can move the turtle around and press `Ctrl+C` when you're finished.
+Вы можете перемещать черепашку и нажать `Ctrl+C`, когда закончите.
 
-#### 4. ros2 bag info
+## 4. `ros2 bag info`
 
-You can see details about your recording by running:
+Вы можете просмотреть подробную информацию о записи, выполнив команду:
 
-```
+```shell
 ros2 bag info <bag_file_name>
 ```
 
-Running this command on the `subset` bag file will return a list of information on the file:
+Выполнив эту команду над файлом `subset`, вы получите список информации о файле:
 
-```
+```shell
 ros2 bag info subset
 ```
 
 ![1732448539441](image/Recordingandplayingbackdata/1732448539441.png)
 
-#### 5. ros2 bag play
+## 5. `ros2 bag play`
 
-Before replaying the bag file, enter `Ctrl+C` in the terminal where the teleop is running. Then make sure your turtlesim window is visible so you can see the bag file in action.
+Перед воспроизведением файла пакета введите `Ctrl+C` в терминале, где запущен teleop. Затем убедитесь, что окно turtlesim открыто, чтобы вы могли увидеть файл bag в действии.
 
-Enter the command:
+Введите команду:
 
-```
+```shell
 ros2 bag play subset
 ```
 
-The terminal will return the message:
+Терминал выдаст сообщение:
 
-```
+```shell
 [INFO] [rosbag2_storage]: Opened database 'subset'.
 ```
 
-Your turtle will follow the same path you entered while recording (though not 100% exactly; turtlesim is sensitive to small changes in the system's timing).
+Ваша черепашка будет следовать по тому же пути, который вы указали во время записи (хотя и не на 100% точно, т.к. turtlesim чувствителен к небольшим изменениям в синхронизации системы).
 
 ![1732448977646](image/Recordingandplayingbackdata/1732448977646.png)
 
-Because the `subset` file recorded the `/turtle1/pose` topic, the `ros2 bag play` command won't quit for as long as you had turtlesim running, even if you weren't moving.
+Поскольку в файле `subset` записан топик `/turtle1/pose`, команда `ros2 bag play` не прервется до тех пор, пока запущен turtlesim, даже если вы не двигаетесь.
 
-This is because as long as the `/turtlesim` node is active, it publishes data on the `/turtle1/pose` topic at regular intervals. You may have noticed in the `ros2 bag info` example result above that the `/turtle1/cmd_vel` topic's `Count` information was only 9; that's how many times we pressed the arrow keys while recording.
+Это происходит потому, что пока узел `/turtlesim` активен, он регулярно публикует данные в топике `/turtle1/pose`. Возможно, вы заметили в приведенном выше результате примера `ros2 bag info`, что в топике `Count` темы `/turtle1/cmd_vel` было только 9; именно столько раз мы нажимали на клавиши со стрелками во время записи.
 
-Notice that `/turtle1/pose` has a `Count` value of over 3000; while we were recording, data was published on that topic 3000 times.
+Обратите внимание, что `/turtle1/pose` имеет значение `Count` более 3000; пока мы вели запись, данные по этому топику были опубликованы 3000 раз.
 
-To get an idea of how often position data is published, you can run the command:
+Чтобы получить представление о том, как часто публикуются данные о положении, можно выполнить команду:
 
-```
+```shell
 ros2 topic hz /turtle1/pose
 ```
 
@@ -150,6 +154,6 @@ ros2 topic hz /turtle1/pose
 
 ...
 
-#### Summary
+# Резюме
 
-You can record data passed on topics in your ROS 2 system using the `ros2 bag` command. Whether you're sharing your work with others or introspecting your own experiments, it's a great tool to know about.
+С помощью команды `ros2 bag` вы можете записывать данные, передаваемые по топикам в вашей системе ROS 2. Если вы хотите поделиться своей работой с другими или проанализировать собственные эксперименты, это отличный инструмент, о котором стоит знать.
