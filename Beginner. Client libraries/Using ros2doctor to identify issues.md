@@ -26,6 +26,8 @@ ros2 doctor
 All <n> checks passed
 ```
 
+![063](images/063.png)
+
 Однако нет ничего необычного в том, чтобы получить несколько предупреждений. Предупреждение `UserWarning` не означает, что ваша установка непригодна для использования; скорее всего, это просто признак того, что что-то настроено не идеально.
 
 Если вы получите предупреждение, оно будет выглядеть примерно так:
@@ -76,6 +78,8 @@ ros2 run turtlesim turtle_teleop_key
 UserWarning: Publisher without subscriber detected on /turtle1/color_sensor.
 UserWarning: Publisher without subscriber detected on /turtle1/pose.
 ```
+
+![064](images/064.png)
 
 Похоже, что узел `/turtlesim` публикует данные в два топика, на которые никто не подписан, и ros2doctor считает, что это может привести к проблемам.
 
@@ -137,7 +141,11 @@ distribution status    : prerelease
 release platforms      : {'<platform>': ['<version>']}
 ```
 
-Здесь вы можете увидеть, что статус `распространения` - `предрелиз`, что объясняет, почему он не полностью поддерживается.
+Здесь вы можете увидеть, что `distribution status` - `prerelease`, что объясняет, почему он не полностью поддерживается.
+
+![065](images/065.png)
+
+Для ros2 humble `distribution status` будет `active`.
 
 # Заключение
 
