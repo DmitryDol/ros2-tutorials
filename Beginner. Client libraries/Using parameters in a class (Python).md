@@ -167,11 +167,15 @@ entry_points={
 rosdep install -i --from-path src --rosdistro humble -y
 ```
 
+![057](images/057.png)
+
 Перейдите в корень рабочей области, `ros2_ws`, и соберите новый пакет:
 
 ```shell
 colcon build --packages-select python_parameters
 ```
+
+![058](images/058.png)
 
 Откройте новый терминал, перейдите в раздел `ros2_ws` и найдите установочные файлы:
 
@@ -184,6 +188,8 @@ source install/local_setup.bash
 ```shell
 ros2 run python_parameters minimal_param_node
 ```
+
+![059](images/059.png)
 
 Терминал должен ежесекундно выдавать следующее сообщение:
 
@@ -207,13 +213,17 @@ ros2 run python_parameters minimal_param_node
 ros2 param list
 ```
 
+![060](images/060.png)
+
 Там вы увидите пользовательский параметр `my_parameter`. Чтобы изменить его, просто выполните следующую строку в консоли:
 
 ```shell
 ros2 param set /minimal_param_node my_parameter earth
 ```
 
-Вы знаете, что все прошло успешно, если получили вывод `Set parameter successful`. Если вы посмотрите на другой терминал, то увидите, что вывод изменился на `[INFO] [minimal_param_node]: Hello Earth!
+Вы знаете, что все прошло успешно, если получили вывод `Set parameter successful`. Если вы посмотрите на другой терминал, то увидите, что вывод изменился на `[INFO] [minimal_param_node]: Hello Earth!`
+
+![061](images/061.png)
 
 Поскольку после этого узел установил параметр обратно в `world`, дальнейший вывод показывает `[INFO] [minimal_param_node]: Hello world!`
 ### 3.2 Change via a launch file
@@ -285,6 +295,8 @@ ros2 launch python_parameters python_parameters_launch.py
 ```shell
 [INFO] [custom_minimal_param_node]: Hello earth!
 ```
+
+![062](images/062.png)
 
 # Заключение
 Мы создали узел с пользовательским параметром, который может быть задан как из файла запуска, так и из командной строки. Добавили зависимости, исполняемые файлы и файл запуска в файлы конфигурации пакета, чтобы можно было собрать и запустить их и увидеть работу параметров.
