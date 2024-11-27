@@ -1,4 +1,4 @@
-# Implementing custom interfaces
+# Реализация пользовательских интерфейсов
 
 ## Задания
 
